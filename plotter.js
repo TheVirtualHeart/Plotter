@@ -1,5 +1,26 @@
-function Point(px, py) {this.x = px; this.y = py;} //generic object for holding two numbers
-function Line(pa, pb, s, p) {this.a = pa; this.b = pb; this.point = p; this.slope = s;} //much like a point, but can also hold slope and intercept info
+/**
+ * A generic object for holding a point
+ * @param {number} px - the x coordinate of the point
+ * @param {number} py - the y coordinate of the point
+ */
+function Point(px, py) {
+	this.x = px; 
+	this.y = py;
+}
+
+/**
+ * A generic object for holding a line.
+ * @param {Point} pa - the first point on the line (used for calculating a line based on two points)
+ * @param {Point} pb - the second point on the line (used for calculating a line based on two points)
+ * @param {number} s - the slope of the line (used for calculating a line based on point-slope)
+ * @param {Point} p - the point on the line (used for calculating a line based on point-slope)
+ */
+function Line(pa, pb, s, p) {
+	this.a = pa; 
+	this.b = pb; 
+	this.point = p; 
+	this.slope = s;
+} //much like a point, but can also hold slope and intercept info
 
 //this function creates a plotter object
 function createPlotter()
@@ -510,7 +531,7 @@ function createPlotter()
 
 function Plot()
 {
-	var ctx = arguments[1];
+	var ctx = arguments[1];							// the context in which the 
 	var settings = arguments[0];
 	
 	var offsetVar = new Point(0, 0);

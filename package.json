@@ -1,0 +1,16 @@
+{
+  "name": "plotter",
+  "version": "0.2.0",
+  "description": "a library for plotting functions on the HTML5 Canvas tag",
+  "main": "plotter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://recanti@bitbucket.org/recanti/plotter.git"
+  },
+  "author": "David Foxworthy, Ben Wilcox",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/recanti/plotter#readme"
+}
