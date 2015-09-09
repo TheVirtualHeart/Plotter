@@ -12,3 +12,6 @@
 
 # sftp configuration file
 sftp-config.json
+
+# ignore node modules. They can be added via npm install
+node_modules
