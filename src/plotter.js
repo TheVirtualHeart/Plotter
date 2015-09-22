@@ -1,5 +1,5 @@
 //this function creates a plotter object
-function createPlotter()
+function createPlotter ()
 {
 	var canvas, ctx;
 	var plots = [];
