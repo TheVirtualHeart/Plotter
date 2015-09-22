@@ -21,7 +21,7 @@ function Line(pa, pb, s, p) {
 	this.slope = s;
 } ;
 //this function creates a plotter object
-function Plotter()
+function createPlotter()
 {
 	var canvas, ctx;
 	var plots = [];
@@ -527,9 +527,9 @@ function Plotter()
 	}
 }
 
-function createPlotter() {
-	return Plotter.apply(this, arguments);
-};
+// function createPlotter() {
+// 	return Plotter.apply(this, arguments;
+// };
 function Plot()
 {
 	var ctx = arguments[1];							// the context in which the 
