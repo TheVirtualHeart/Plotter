@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>Plot Multiple Functions test</title>
+	<title>Grunt Build test</title>
 	<script src="../plotter.min.js"></script>
 	<script>
 		var app;
@@ -10,7 +10,7 @@
 
 		// define the graph
 		function buildGraphs() {
-			app = Plotter(document.getElementById("plot"));
+			app = createPlotter(document.getElementById("plot"));
 
 			app.newPlot({
 				domain: new Point(0, 10),

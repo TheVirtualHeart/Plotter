@@ -506,5 +506,5 @@ function Plotter()
 }
 
 function createPlotter() {
-	return new Plotter(arguments);
+	return Plotter.apply(this, arguments);
 }
