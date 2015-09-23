@@ -501,6 +501,45 @@ function createPlotter ()
 			
 			point = this.plotToCanvas(point);
 			ctx.fillText(text, point.x, point.y);
+		},
+
+		/**
+		 * take a generic plot object and draw it on the graph
+		 * @param  {[type]} pointObject the object that we will plot.
+		 * must have a plot() function.
+		 * @return {[type]}            [description]
+		 */
+		plot: function(pointObject) {
+
+			var fill = pointObject.fillColor;
+			var stroke = pointObject.strokeColor;
+			var strokeWeight = pointObject.strokeWeight;
+			var r = pointObject.radius;
+			ctx.fillStyle = fill;
+			ctx.strokeStyle = stroke;
+			ctx.lineWidth = strokeWeight;
+
+			ctx.beginPath();
+
+			for (var i = 0; i < pointObject.points.length; i++) {
+
+				var point = pointObject.points[i];
+				p = this.plotToCanvas(point);
+
+
+				ctx.arc(p.x, p.y, r, 0, 2 * Math.PI);
+
+				if (pointObject.closed && i > 0) {
+					ctx.lineTo(p.x, p.y);
+				} else {
+					ctx.moveTo(p.x, p.y);
+				}
+			}
+
+			ctx.fill();
+			if (strokeWeight !== 0) {
+				ctx.stroke();
+			}
 		}
 	}
 }

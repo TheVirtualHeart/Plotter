@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Get Data</title>
+	<script src="../plotter.min.js"></script>
+	<script>
+		var app;
+		var debug = [];
+
+		// define the graph
+		function buildGraphs() {
+			app = createPlotter(document.getElementById("plot"));
+
+			app.newPlot({
+				domain: new Point(0, 10),
+				range: new Point(0, 10),
+				xAxis: "Time (ms)",
+				yAxis: "V (mv)",
+				labelFrequency: new Point(1, 1),
+				pixelPerUnit: new Point(25, 25),
+				unitPerTick: new Point(1, 1)
+			}, "Demo");
+		}
+
+		function linear(x) {
+			return x;
+		}
+
+		function quadratic(x) {
+			return Math.pow(x, 2);
+		}
+
+		/**
+		 * Initialize the graph and attach event listeners when
+		 * the form loads
+		 */
+		window.onload = function() {
+			debug = [];
+			buildGraphs();
+			app.selectPlot("Demo");
+			app.plotFunction(linear, true, .1, 0, 10);
+
+		}
+
+		function displayTable() {
+			console.table(debug, ["time", "Vm", "V"]);
+		}
+
+		function getData() {
+			app.getData(linear, true, .1, 0, 10);
+		}
+	</script>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+	<button onclick="getData();">Get Graph Data</button>
+</body>
+</html>
