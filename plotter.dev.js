@@ -387,9 +387,8 @@ function createPlotter()
 				return;
 			return currentPlot.settings;
 		},
-		pointOnPlot: function(p)
+		pointOnPlot: function(p, plot)
 		{
-			plot = currentPlot;
 			if (typeof plot === "number" && 
 			   (plot >= 0 && plot <= plots.length - 1)) {
 					plot = plots[plot];
@@ -404,9 +403,9 @@ function createPlotter()
 				plot = plots[plotNames[plot]];
 			}
 			else
-				currentPlot;
+				plot = currentPlot;
 			
-			return pointInBounds(p, currentPlot);
+			return pointInBounds(p, plot);
 		},
 		plotToCanvas: function(p)
 		{

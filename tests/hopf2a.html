@@ -79,9 +79,9 @@
 				
 				//if the point is on the plot and it has not been plotted before, push it to the array
 				//these checks are done to ensure optimization and zero duplicate entries
-				if (!isPointPlotted(newPointA) && app.pointOnPlot(newPointA))
+				if (!isPointPlotted(newPointA) && app.pointOnPlot(newPointA, "scatter"))
 					points.push(newPointA);
-				if (!isPointPlotted(newPointB) && app.pointOnPlot(newPointB))
+				if (!isPointPlotted(newPointB) && app.pointOnPlot(newPointB, "scatter"))
 					points.push(newPointB);
 			}
 		}
