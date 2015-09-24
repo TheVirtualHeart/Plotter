@@ -365,12 +365,22 @@ function createPlotter ()
 				return;
 			return currentPlot.settings;
 		},
-		pointOnPlot: function(p, plot)
+		pointOnPlot: function(p)
 		{
-			if (typeof plot === "number" && (plot >= 0 && plot <= plots.length - 1))
-				plot = plots[plot];
-			else if (typeof plot === "string" || plot instanceof String || plot.constructor == String || Object.prototype.toString.call(plot) == "[object String]")
-				plot = plots[plotNames[plot]]
+			plot = currentPlot;
+			if (typeof plot === "number" && 
+			   (plot >= 0 && plot <= plots.length - 1)) {
+					plot = plots[plot];
+			}
+			else if (typeof plot === "string" || 
+					 plot instanceof String || 
+					 Object.prototype.toString.call(plot) == "[object String]") {
+
+				plot = plots[plotNames[plot]];
+			}
+			else if (plot.hasOwnProperty('constructor') && plot.constructor == String) {
+				plot = plots[plotNames[plot]];
+			}
 			else
 				currentPlot;
 			
