@@ -33,17 +33,17 @@
 			buildGraphs();
 			app.selectPlot("Demo");
 
-			var obj = new PointObject({
-				closed: true,
+			var obj = new PointObject();
+			obj.addPoint({"x":3, "y":3});
+			obj.addPoint({"x":5, "y":5});
 
-				fillColor: "green",
-				strokeColor: "red",
-				strokeWeight: 2,
-				radius: 0
-			});
-			obj.addPoint(new Point(5, 5));
-			obj.addPoint(new Point(3, 3));
-			app.plot(obj);
+			var settings = {
+				plotVar: "y",
+				connected: true,
+				r: 0,
+			}
+
+			app.plot(obj, settings);
 
 		}
 

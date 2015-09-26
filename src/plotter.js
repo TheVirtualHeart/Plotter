@@ -509,37 +509,31 @@ function createPlotter ()
 		 * must have a plot() function.
 		 * @return {[type]}            [description]
 		 */
-		plot: function(pointObject) {
+		plot: function(pointObject, settings) {
 
-			var fill = pointObject.fillColor;
-			var stroke = pointObject.strokeColor;
-			var strokeWeight = pointObject.strokeWeight;
-			var r = pointObject.radius;
-			ctx.fillStyle = fill;
-			ctx.strokeStyle = stroke;
-			ctx.lineWidth = strokeWeight;
+			var points = pointObject.getPoints();
 
 			ctx.beginPath();
+			for (var i = 0; i < points.length; i++) {
 
-			for (var i = 0; i < pointObject.points.length; i++) {
+				var pointVars = points[i];
 
-				var point = pointObject.points[i];
+				var point = new Point(pointVars["x"], pointVars[settings.plotVar]);
 				p = this.plotToCanvas(point);
 
+				ctx.arc(p.x, p.y, settings.r, 0, 2 * Math.PI);
 
-				ctx.arc(p.x, p.y, r, 0, 2 * Math.PI);
-
-				if (pointObject.closed && i > 0) {
+				if (settings.closed && i > 0) {
 					ctx.lineTo(p.x, p.y);
 				} else {
 					ctx.moveTo(p.x, p.y);
 				}
 			}
 
-			ctx.fill();
-			if (strokeWeight !== 0) {
+			//ctx.fill();
+			//if (strokeWeight !== 0) {
 				ctx.stroke();
-			}
+			//}
 		}
 	}
 }
