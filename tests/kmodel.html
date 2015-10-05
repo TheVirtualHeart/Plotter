@@ -108,7 +108,8 @@
 		 * print the data from plotter.
 		 */
 		function printData() {
-			app.getPlotData(Karma);
+			var csv = app.getPlotData(Karma);
+			//window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));
 		}
 
 		/**

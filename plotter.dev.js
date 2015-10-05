@@ -679,26 +679,35 @@ function createPlotter ()
 		},
 
 		/**
-		 * take a generic plot object and draw it on the graph
-		 * @param  {[type]} pointObject the object that we will plot.
-		 * must have a plot() function.
-		 * @return {[type]}            [description]
+		 * Take a PointObject and draw it on the graph. It will plot the 
+		 * variable specified with its associated "x" value. The user can also
+		 * specify specific styles for the value.
+		 * 
+		 * @param {PointObject} pointObject - the object that we will plot.
+		 * @param {string} plotVar - the variable from the point object that
+		 * will act as the "y" value on the graph.
+		 * @param {Object} style - An object that contains various style
+		 * style properties for the plot.
 		 */
-		plot: function(pointObject, settings) {
+		plot: function(pointObject, plotVar, style) {
+
+			var connected = style.connected ? style.connected : false;
+			var radius = style.radius ? style.radius : 0;
+			var strokeStyle = style.strokeStyle ? style.strokeStyle: "#000000";
+			var fillStyle = style.fillStyle ? style.fillStyle: null;
+
+			ctx.strokeStyle = strokeStyle;
+			ctx.fillStyle = fillStyle;
 
 			var points = pointObject.getPoints();
 
 			ctx.beginPath();
 			for (var i = 0; i < points.length; i++) {
-
 				var pointVars = points[i];
-
-				var point = new Point(pointVars["x"], pointVars[settings.plotVar]);
-				p = this.plotToCanvas(point);
-
-				ctx.arc(p.x, p.y, settings.r, 0, 2 * Math.PI);
-
-				if (settings.closed && i > 0) {
+				var point = new Point(pointVars["x"], pointVars[plotVar]);
+				var p = this.plotToCanvas(point);
+				ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
+				if (connected && i > 0) {
 					ctx.lineTo(p.x, p.y);
 				} else {
 					ctx.moveTo(p.x, p.y);
@@ -709,6 +718,43 @@ function createPlotter ()
 			//if (strokeWeight !== 0) {
 				ctx.stroke();
 			//}
+		},
+
+		/**
+		 * Print the plot data of the pointObject. The plotter accepts a 
+		 * PointObject, generates points, and then parses it.
+		 * @param  {PointObject} pointObject - the object from which plotter
+		 * retrieves the points.
+		 * @param  {number} start - the point at which the pointObject starts
+		 * plotting
+		 * @param  {number} end - the point at which the pointObject stops
+		 * plotting
+		 * @param  {number} step - the amount that the pointObject increments
+		 * each time.
+		 * @return {string} - a csv string of the data;
+		 */
+		getPlotData: function(pointObject) {
+			var csv = "";
+			var points = pointObject.getPoints();
+
+			var header = [];
+			var point = {};
+			for (var i = 0; i < points.length; i++) {
+				point = points[i];
+				if (i === 0) {	
+					header = Object.keys(point);
+					for(var j = 0; j < header.length; j++) {
+						csv += header[j] + ",";
+					}
+					csv += "\n";
+				}
+				for (var j = 0; j < header.length; j++) {
+					csv += point[header[j]] + ",";
+				}
+				csv += "\n";
+
+			}
+			window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));;
 		}
 	}
 }
