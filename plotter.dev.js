@@ -721,35 +721,38 @@ function createPlotter ()
 		},
 
 		/**
-		 * Print the plot data of the pointObject. The plotter accepts a 
-		 * PointObject, generates points, and then parses it.
+		 * Print the plot data of the pointObject as CSV. The function accepts
+		 * a PointObject, retrives its points and parses the specified fields
+		 * as a CSV file. If no fields are specified, the function will print
+		 * all of them.
+		 *
 		 * @param  {PointObject} pointObject - the object from which plotter
 		 * retrieves the points.
-		 * @param  {number} start - the point at which the pointObject starts
-		 * plotting
-		 * @param  {number} end - the point at which the pointObject stops
-		 * plotting
-		 * @param  {number} step - the amount that the pointObject increments
-		 * each time.
-		 * @return {string} - a csv string of the data;
+		 * @param  {[Array]} fields - an array of the fields to display
 		 */
-		getPlotData: function(pointObject) {
+		printPlotData: function(pointObject, fields) {
 			var csv = "";
 			var points = pointObject.getPoints();
 
-			var header = [];
+			var header = fields ? fields : Object.keys(points[0]);
+
 			var point = {};
 			for (var i = 0; i < points.length; i++) {
 				point = points[i];
 				if (i === 0) {	
-					header = Object.keys(point);
 					for(var j = 0; j < header.length; j++) {
-						csv += header[j] + ",";
+						if (j > 0) {
+							csv += ",";
+						}
+						csv += header[j];
 					}
 					csv += "\n";
 				}
 				for (var j = 0; j < header.length; j++) {
-					csv += point[header[j]] + ",";
+					if (j > 0) {
+						csv += ",";
+					}
+					csv += point[header[j]];
 				}
 				csv += "\n";
 
