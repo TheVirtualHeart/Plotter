@@ -558,9 +558,8 @@ function createPlotter ()
 		printPlotData: function(pointObject, fields) {
 			var csv = "";
 			var points = pointObject.getPoints();
-
 			var header = fields ? fields : Object.keys(points[0]);
-
+			
 			var point = {};
 			for (var i = 0; i < points.length; i++) {
 				point = points[i];
@@ -580,7 +579,6 @@ function createPlotter ()
 					csv += point[header[j]];
 				}
 				csv += "\n";
-
 			}
 			window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));;
 		}
