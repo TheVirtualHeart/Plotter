@@ -530,6 +530,9 @@ function createPlotter()
 			var strokeStyle = style.strokeStyle ? style.strokeStyle: "#000000";
 			var fillStyle = style.fillStyle ? style.fillStyle: null;
 
+			var normalizeMax = (style.hasOwnProperty("normalizeMax")) ? style.normalizeMax: null;
+			var normalizeMin = (style.hasOwnProperty("normalizeMin")) ? style.normalizeMin: null;
+
 			ctx.strokeStyle = strokeStyle;
 			ctx.fillStyle = fillStyle;
 
@@ -538,7 +541,15 @@ function createPlotter()
 			ctx.beginPath();
 			for (var i = 0; i < points.length; i++) {
 				var pointVars = points[i];
-				var point = new Point(pointVars["x"], pointVars[plotVar]);
+
+				var x = pointVars["x"];
+				var y = pointVars[plotVar];
+
+				if (normalizeMax !== null && normalizeMin !== null) {
+					y = (y - normalizeMin)/(normalizeMax - normalizeMin);
+				}
+				var point = new Point(x, y);
+
 				var p = this.plotToCanvas(point);
 				ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
 				if (connected && i > 0) {

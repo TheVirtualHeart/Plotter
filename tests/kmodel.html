@@ -13,38 +13,25 @@
 		var app;
 		var debug = [];
 
-		var ueps = 250.0;
-		var eps = 1.0 / ueps;
-		var xm = 10.0;
-		var vstar = 0.64;
-		var s1 = 0.0;						// the first point to introduce voltage
-		var s2 = 300.0;						// the second point to introduce voltage
-		var time = 500.0;					// the time over which we view the function
-		var previousHeaviside = 0;
-		var currentHeaviside = 0;
 
-		var timestep = .25;					// dt - this should be covered by x
-		var voltageHeight = 4;
-
-		var curTime = 0.0;					// t - this should be covered by x
-		var voltage = 0.0;					// Vm - the Voltage in the cell 
-		var vgate = 0.0;					// v - the Voltage gate of the cell
-
-		var vValues = [];
-		var vmValues = [];
 
 		var displayV = true;
 		var displayVm = true;
 
 
 		var Karma = new PointObject();
+		Karma.eps = 1.0/250;
+		Karma.xm = 10.0;
+		Karma.vstar = 0.64;
+		Karma.s1 = 0.0;
+		Karma.s2 = 300.0;
 		Karma.voltage = 0.0;
 		Karma.vgate = 0.0;
 
-		Karma.calculate = function(p) {
+		Karma.calculate = function(p, dp) {
 
 			// if the time is either s1 or s2, change the value of Vm to 1.5
-		    if (p == s1 || p == s2) { 
+		    if (p == this.s1 || p == this.s2) { 
 		    	this.voltage = 1.5;
 		    }
 
@@ -56,11 +43,11 @@
 		    var delta = 0.23;
 		    var alpha = 7.5;
 		    var h = Math.pow(this.voltage, 2) * (1 - (delta * this.voltage));
-		    var diffVoltage = (-this.voltage + (gamma - Math.pow((this.vgate / vstar), xm)) * h);
-		    this.voltage += 5 * timestep * diffVoltage / alpha; // don't know why this works
+		    var diffVoltage = (-this.voltage + (gamma - Math.pow((this.vgate / this.vstar), this.xm)) * h);
+		    this.voltage += 5 * dp * diffVoltage / alpha; // don't know why this works
 
-		    var diffVGate = eps * (previousHeaviside - this.vgate);
-		    this.vgate += timestep * diffVGate;
+		    var diffVGate = this.eps * (previousHeaviside - this.vgate);
+		    this.vgate += dp * diffVGate;
 
 		    //debug.push({ "time":p, "Vm":voltage, "V":vgate});
 		    
@@ -80,8 +67,8 @@
 			app = createPlotter(document.getElementById("plot"));
 
 			app.newPlot({
-				domain: new Point(0, time),
-				range: new Point(0, voltageHeight),
+				domain: new Point(0, 500),
+				range: new Point(0, 4),
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
 				labelFrequency: new Point(1, 1),
@@ -170,8 +157,8 @@
 		function refitPlot() {
 			app.editPlot("Karma",
 			{
-				domain: new Point(0, time),
-				pixelPerUnit: new Point(1/(time/500), 100)
+				domain: new Point(0, 500),
+				pixelPerUnit: new Point(1/(500/500), 100)
 			},
 			true,
 			true);
@@ -220,17 +207,21 @@
 
 			// }
 
-			Karma.generate(0, time, timestep);
+			Karma.generate(0, 500, .25);
 			app.plot(Karma, "vgate", {
 				connected: true,
 				radius: 0,
-				strokeStyle: "green"
+				strokeStyle: "green", 
+				normalizeMax: .75,
+				normalizeMin: 0
 			});
 
 			app.plot(Karma, "voltage", {
 				connected: true,
 				r: 0,
-				strokeStyle: "red"
+				strokeStyle: "red",
+				normalizeMax: 4,
+				normalizeMin: 0
 			});
 
 			// // display vgate
