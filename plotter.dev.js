@@ -705,6 +705,7 @@ function createPlotter()
 			var strokeStyle = style.strokeStyle ? style.strokeStyle: "#000000";
 			var fillStyle = style.fillStyle ? style.fillStyle: null;
 
+			var normalize = style.normalize ? style.normalize: null;
 			var normalizeMax = (style.hasOwnProperty("normalizeMax")) ? style.normalizeMax: null;
 			var normalizeMin = (style.hasOwnProperty("normalizeMin")) ? style.normalizeMin: null;
 
@@ -720,9 +721,14 @@ function createPlotter()
 				var x = pointVars["x"];
 				var y = pointVars[plotVar];
 
-				if (normalizeMax !== null && normalizeMin !== null) {
-					y = (y - normalizeMin)/(normalizeMax - normalizeMin);
+				// if (normalizeMax !== null && normalizeMin !== null) {
+				// 	y = (y - normalizeMin)/(normalizeMax - normalizeMin);
+				// }
+				
+				if (normalize) {
+					y = (y - normalize.x)/(normalize.y - normalize.x);
 				}
+
 				var point = new Point(x, y);
 
 				var p = this.plotToCanvas(point);

@@ -212,16 +212,14 @@
 				connected: true,
 				radius: 0,
 				strokeStyle: "green", 
-				normalizeMax: .75,
-				normalizeMin: 0
+				normalize: new Point(0, .75)
 			});
 
 			app.plot(Karma, "voltage", {
 				connected: true,
 				r: 0,
 				strokeStyle: "red",
-				normalizeMax: 4,
-				normalizeMin: 0
+				normalize: new Point(0, 4)
 			});
 
 			// // display vgate
