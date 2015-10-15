@@ -24,6 +24,14 @@ function PointObject() {
 		return {"x":x, "dx":dx};
 	}
 
+	/**
+	 * This function reinitializes the PointObject. It clears the points array,
+	 * but it can be used to reset differential equation values.
+	 */
+	this.clear = function() {
+		this.points = [];
+	}
+
 }
 
 /**
