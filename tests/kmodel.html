@@ -1,8 +1,13 @@
+---
+title: kmodel
+plot: true
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<title>Karma Model</title>
+	<link href="../plotter.css" type="text/css" rel="stylesheet" />
 	<script src="../plotter.dev.js"></script>
 	<script>
 
@@ -11,64 +16,73 @@
 		 define global variables here
 		 **************************************************/
 		var app;
-		var debug = [];
-
-
-
+		var curtime = 500.0;
+		var timestep = .01;					// dt - this should be covered by x
 		var displayV = true;
 		var displayVm = true;
+		var vHeight = 4;
 
-
-		var Karma = new PointObject();
-		Karma.eps = 1.0/250;
-		Karma.xm = 10.0;
-		Karma.vstar = 0.64;
-		Karma.s1 = 0.0;
-		Karma.s2 = 300.0;
-		Karma.voltage = 0.0;
-		Karma.vgate = 0.0;
-
-		Karma.calculate = function(p, dp) {
-
-			// if the time is either s1 or s2, change the value of Vm to 1.5
-		    if (p == this.s1 || p == this.s2) { 
-		    	this.voltage = 1.5;
-		    }
-
-	        // calculate heaviside of 
-	        previousHeaviside = heaviside(this.voltage - 1);
-
-		    // Partial derivative of Vm (equation 1)
-		    var gamma = 1.92;
-		    var delta = 0.23;
-		    var alpha = 7.5;
-		    var h = Math.pow(this.voltage, 2) * (1 - (delta * this.voltage));
-		    var diffVoltage = (-this.voltage + (gamma - Math.pow((this.vgate / this.vstar), this.xm)) * h);
-		    this.voltage += 5 * dp * diffVoltage / alpha; // don't know why this works
-
-		    var diffVGate = this.eps * (previousHeaviside - this.vgate);
-		    this.vgate += dp * diffVGate;
-
-		    //debug.push({ "time":p, "Vm":voltage, "V":vgate});
-		    
-		    return { "x":p, "voltage": this.voltage, "vgate": this.vgate };
-
-		}
-
-		/**************************************************
-		 PAGE FUNCTIONS	
-		 declare functions that initialize the page here
-		 **************************************************/
+		var defaultUeps = 250.0;
+		var defaultEps = 1/defaultUeps;
+		var defaultVStar = 0.64;
+		var defaultXm = 10.0;
+		var defaultVoltage = 0.0;
+		var defaultVGate = 0.0;
+		var defaultS1 = 0.0;
+		var defaultS2 = 300.0;
+		var defaultTime = 5000.0;
 
 		/**
-		 * Initialize the Plotter and define any graphs we want to appear on it
+		 * Define the Karma PointObject
 		 */
-		function buildGraphs() {
-			app = createPlotter(document.getElementById("plot"));
+		var Karma = new PointObject();
+		Karma.gamma = 1.92;
+		Karma.delta = 0.23;
+		Karma.alpha = 7.5;
 
+		Karma.eps = defaultEps;
+		Karma.vstar = defaultVStar;
+		Karma.xm = defaultXm;
+		Karma.voltage = defaultVoltage;
+		Karma.vgate = defaultVGate;
+
+		Karma.s1 = defaultS1;
+		Karma.s2 = defaultS2;
+
+		Karma.clear = function() {
+			Karma.points = [];
+			Karma.voltage = defaultVoltage;
+			Karma.vgate = defaultVGate;
+		};
+		Karma.calculate = function(x, dx) {
+		    if (x == this.s1 || x == this.s2) { 
+		    	this.voltage = 1.5;
+		    }
+	        var previousHeaviside = 1;
+	        if (this.voltage - 1 < 0) {
+	        	previousHeaviside = 0;
+	        }
+		    // Partial derivative of Vm (equation 1)
+		    var h = Math.pow(this.voltage, 2) * (1 - (this.delta * this.voltage));
+		    var diffVoltage = (-this.voltage + (this.gamma - Math.pow((this.vgate / this.vstar), this.xm)) * h);
+		    this.voltage += 5 * dx * diffVoltage / this.alpha; // don't know why this works
+		    var diffVGate = this.eps * (previousHeaviside - this.vgate);
+		    this.vgate += dx * diffVGate;
+		    return { "x":x, "voltage": this.voltage, "vgate": this.vgate };
+		};
+
+		var s1Line = new PointObject();
+		var s2Line = new PointObject();
+
+		/** 
+		 * This function creates the plotter object and then defines the
+		 * initial plots.
+		 */
+		function initializePlotter() {
+			app = createPlotter(document.getElementById("plot"));
 			app.newPlot({
 				domain: new Point(0, 500),
-				range: new Point(0, 4),
+				range: new Point(0, vHeight),
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
 				labelFrequency: new Point(1, 1),
@@ -78,281 +92,219 @@
 			}, "Karma");
 		}
 
+		// /**
+		//  * Set the initial values of all of the plots
+		//  */
+		// function initializePointObjects() {
+		// 	Karma.initialize();
+		// }
 
-		/** 
-		 * Wire the form event handlers
+		/**
+		 * Clear and reinitialize all PointObjects
 		 */
-		function buildForms() {
-			document.getElementById("reset").onclick = resetGraph;
-			document.getElementById("default").onclick = setDefaults;
+		function clearPointObjects() {
+			Karma.clear();
+			s1Line.clear();
+			s2Line.clear();
+		}
 
-			document.getElementById("displayVm").onclick = resetGraph;
-			document.getElementById("displayV").onclick = resetGraph;
-			document.getElementById("getData").onclick = printData;
+		function generatePoints() {
+			Karma.generate(0, curtime, timestep);
 		}
 
 		/**
-		 * print the data from plotter.
+		 * Set the initial values for the form elements and then wire the form
+		 * elements so that they can change the graph
+		 */
+		function initializeForms() {
+			setFieldDefaults();
+
+			var fieldsForm = document.getElementById("controls");
+			fieldsForm.addEventListener("submit", function(e) {
+					e.preventDefault();
+					clearPointObjects();
+					updatePlots();
+					generatePoints();
+					drawPlots();
+			});
+			var vCheckbox = document.getElementById("displayV");
+			vCheckbox.addEventListener('click', 
+				function() {
+					if (vCheckbox.checked) {
+						displayV = true;
+					} else {
+						displayV = false;
+					}
+					drawPlots();
+				}, false);
+
+			var vmCheckbox = document.getElementById("displayVm");
+			vmCheckbox.addEventListener('click', 
+				function() {
+					if (vmCheckbox.checked) {
+						displayVm = true;
+					} else {
+						displayVm = false;
+					}
+					drawPlots();
+				}, false);
+
+			document.getElementById("update").addEventListener('click', 
+				function() {
+					clearPointObjects();
+					updatePlots();
+					generatePoints();
+					drawPlots();
+				}, false);
+
+			document.getElementById("default").addEventListener('click',
+				function() {
+					setFieldDefaults();
+					clearPointObjects();
+					updatePlots();
+					generatePoints();
+					drawPlots();
+				}, false);
+
+			document.getElementById("export").addEventListener('click',
+				printData, false);
+
+		}
+
+		/**
+		 * Set the fields in the form to the default values
+		 */
+		function setFieldDefaults() {
+			document.getElementsByName("vstar")[0].value = defaultVStar;
+			document.getElementsByName("xm")[0].value = defaultXm;
+			document.getElementsByName("ueps")[0].value = defaultUeps;
+			document.getElementsByName("s1")[0].value = defaultS1;
+			document.getElementsByName("s2")[0].value = defaultS2;
+			document.getElementsByName("time")[0].value = defaultTime;
+		}
+
+		/**
+		 * Set the values of the graph with the input values from each of the 
+		 * input elements. If necessary, resize the plot as well.
+		 */
+		function updatePlots() {
+			Karma.vstar = 
+				numericValue(document.getElementsByName("vstar")[0].value);
+			Karma.xm = numericValue(document.getElementsByName("xm")[0].value);
+			var ueps = numericValue(document.getElementsByName("ueps")[0].value);
+			if (ueps > 0) {
+				Karma.eps = 1/ueps;
+			} else {
+				Karma.eps = 1/defaultUeps;
+			}
+			Karma.s1 = numericValue(document.getElementsByName("s1")[0].value);
+			Karma.s2 = numericValue(document.getElementsByName("s2")[0].value);
+
+			var fieldTime = numericValue(document.getElementsByName("time")[0].value);
+			if (curtime !== fieldTime) {
+				curtime = fieldTime;
+				refitPlot()
+			}
+
+			
+			s1Line.addPoint( {"x": Karma.s1, "y":0} );
+			s1Line.addPoint( {"x": Karma.s1, "y":vHeight} );
+
+			s2Line.addPoint( {"x": Karma.s2, "y":0} );
+			s2Line.addPoint( {"x": Karma.s2, "y":vHeight});
+
+		}
+
+		/** 
+		 * Once the plots have been initialized, draw them with Plotter
+		 */
+		function drawPlots() {
+			console.log("draw plots");
+			app.selectPlot("Karma");
+			if(displayV) {
+				app.plot(Karma, "vgate", {
+					connected: true,
+					radius: 0,
+					strokeStyle: "green"
+				});
+			}
+			if (displayVm) {
+				app.plot(Karma, "voltage", {
+					connected: true,
+					r: 0,
+					strokeStyle: "red"
+				});
+			}
+
+			app.plot(s1Line, "y", {
+				connected: true,
+				strokeStyle: "black"
+			});
+
+			app.plot(s2Line, "y", {
+				connected: true,
+				strokeStyle: "black"
+			});
+
+			app.plotText("S1", new Point(s1Line.getPoints()[0]["x"], vHeight/2));
+			app.plotText("S2", new Point(s2Line.getPoints()[0]["x"], vHeight/2));
+
+		}
+
+		/**
+		 * Given a PointObject, print all of the points that it contains.
 		 */
 		function printData() {
-			var csv = app.printPlotData(Karma);
-			//window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));
+			var fields = ["x"];
+			if (displayVm) {
+				fields.push("voltage");
+			}
+			if (displayV) {
+				fields.push("vgate");
+			}
+			app.printPlotData(Karma, fields);
 		}
 
 		/**
-		 * Reset the graph with the given form values
+		 * This function resizes the plot to extend from 0 to the specified
+		 * time
 		 */
-		function resetGraph() {
-			vstar = numericValue(document.getElementsByName("vstar")[0].value);
-			xm = numericValue(document.getElementsByName("xm")[0].value);
-			ueps = numericValue(document.getElementsByName("ueps")[0].value);
-			eps = 1/ueps;
-			s1 = numericValue(document.getElementsByName("s1")[0].value);
-			s2 = numericValue(document.getElementsByName("s2")[0].value);
-			time = numericValue(document.getElementsByName("time")[0].value);
-
-			displayVm = document.getElementsByName("displayVm")[0].checked;
-			displayV = document.getElementsByName("displayV")[0].checked;
-
-			Karma.voltage = 0.0;
-			Karma.vgate = 0.0;
-			Karma.points = [];
-
-			update();
-		}
-
-		/** 
-		 * Reset the form with the default values
-		 */
-		function setDefaults() {
-			ueps = 250.0;
-			eps = 1.0 / ueps;
-			xm = 10.0;
-			vstar = 0.64;
-			s1 = 0.0;						// the first point to introduce voltage
-			s2 = 300.0;						// the second point to introduce voltage
-			time = 500.0;					// the time over which we view the function
-			previousHeaviside = 0;
-			currentHeaviside = 0;
-
-			timestep = .25;					// dt - this should be covered by x
-			startTime = 0;
-
-			curTime = 0.0;					// t - this should be covered by x
-			voltage = 0.0;					// Vm - the Voltage in the cell 
-			vgate = 0.0;
-
-			// update the form to reflect the changes
-			document.getElementsByName("vstar")[0].value = vstar;
-			document.getElementsByName("xm")[0].value = xm;
-			document.getElementsByName("ueps")[0].value = ueps;
-			document.getElementsByName("s1")[0].value = s1;
-			document.getElementsByName("s2")[0].value = s2;
-			document.getElementsByName("time")[0].value = time;
-
-			app.clearPlot();
-			update();
-		}
-
 		function refitPlot() {
 			app.editPlot("Karma",
 			{
-				domain: new Point(0, 500),
-				pixelPerUnit: new Point(1/(500/500), 100)
+				domain: new Point(0, curtime),
+				pixelPerUnit: new Point(1/(curtime/500), 100)
 			},
 			true,
 			true);
 		}
 
-		/**
-		 * Update the graph and redraw all of the plots
-		 */
-		//var count = 0;
-		function update() {
-
-			refitPlot();
-
-			//app.clearPlot();
-
-			app.selectPlot("Karma");
-
-			//var Karma = new PointObject();
-			// Karma.voltage = 0.0;
-			// Karma.vgate = 0.0;
-
-			// Karma.calculate = function(p) {
-
-			// 	// if the time is either s1 or s2, change the value of Vm to 1.5
-			//     if (p == s1 || p == s2) { 
-			//     	this.voltage = 1.5;
-			//     }
-
-		 //        // calculate heaviside of 
-		 //        previousHeaviside = heaviside(this.voltage - 1);
-
-			//     // Partial derivative of Vm (equation 1)
-			//     var gamma = 1.92;
-			//     var delta = 0.23;
-			//     var alpha = 7.5;
-			//     var h = Math.pow(this.voltage, 2) * (1 - (delta * this.voltage));
-			//     var diffVoltage = (-this.voltage + (gamma - Math.pow((this.vgate / vstar), xm)) * h);
-			//     this.voltage += 5 * timestep * diffVoltage / alpha; // don't know why this works
-
-			//     var diffVGate = eps * (previousHeaviside - this.vgate);
-			//     this.vgate += timestep * diffVGate;
-
-			//     //debug.push({ "time":p, "Vm":voltage, "V":vgate});
-			    
-			//     return { "x":p, "voltage": this.voltage, "vgate": this.vgate };
-
-			// }
-
-			Karma.generate(0, 500, .25);
-			app.plot(Karma, "vgate", {
-				connected: true,
-				radius: 0,
-				strokeStyle: "green", 
-				normalize: new Point(0, .75)
-			});
-
-			app.plot(Karma, "voltage", {
-				connected: true,
-				r: 0,
-				strokeStyle: "red",
-				normalize: new Point(0, 4)
-			});
-
-			// // display vgate
-			// if (displayV) {
-			// 	voltage = 0.0;
-			// 	vgate = 0.0;
-			// 	app.plotFunction(calculateVGate, true, timestep);
-			// }
-
-			// // display voltage
-			// if (displayVm) {
-			// 	voltage = 0.0;
-			// 	vgate = 0.0;
-			// 	app.plotFunction(calculateVoltage, true, timestep);
-			// }
-
-			// // display s1
-			// var p1 = new Point(s1, 0),
-			// 	p2 = new Point(s1, voltageHeight);
-			// app.ctx.strokeStyle = "#000000";
-			// app.plotLine(p1, p2);
-
-			// var p = new Point(s1 + 15, 1.5);
-			// app.plotText("S1", p);
-
-			
-			// // display s2
-			// var p1 = new Point(s2, 0),
-			// 	p2 = new Point(s2, voltageHeight);
-			// app.ctx.strokeStyle = "#000000";
-			// app.plotLine(p1, p2);
-
-			// var p = new Point(s2 + 15, 1.5);
-			app.plotText("S2", p);
-
-			//window.requestAnimationFrame(update);		
-		}
 
 		/**
-		 * Initialize the graph and attach event listeners when
+		 * When the page is loaded, do the following things:
+		 * 		1) Initialize the Plotter and the Plots
+		 * 		2) Initialize the Forms
+		 * 		3) Set any initial values on the Point Objects
+		 * 		4) Generate values from the point object
+		 * 		5) Determine which Points to draw
+		 * 		6) Draw the points
 		 * the form loads
 		 */
 		window.onload = function() {
-			debug = [];
-			buildGraphs();
-			buildForms();
-			update();
-
-			//setInterval(update, 1000/60);
-			//requestAnimationFrame(update);
+			initializePlotter();
+			initializeForms();
+			updatePlots();
+			generatePoints();
+			drawPlots();
 		}
 
-		/**
-		 * Debug function. Display a table containing the values that are being displayed
+
+		/** 
+		 * A convenience function for calculating numeric value of an input
+		 * without getting any errors.
+		 * @param  {string} value The String value to convert into a number.
+		 * @return {Number}       The numeric value of the input or zero if incorrect
 		 */
-		function displayTable() {
-			console.table(debug, ["time", "Vm", "V"]);
-		}
-
-		/**************************************************
-		 GRAPH FUNCTIONS	
-		 declare functions that control the behavior of the
-		 graphs here
-		 **************************************************/
-		/**
-		 * a function that draws a graph based on the Karma model
-		 * @param  {[int]} x [the current x value of the function]
-		 * @return {[int]}   [the y value generated based on the x value]
-		 */
-		function calculateKarma(x) {
-
-		    // if the time is either s1 or s2, change the value of Vm to 1.5
-		    if (x == s1 || x == s2) { 
-		    	voltage = 1.5;
-		    }
-
-	        // calculate heaviside of 
-	        previousHeaviside = heaviside(voltage - 1);
-
-		    // Partial derivative of Vm (equation 1)
-		    var gamma = 1.92;
-		    var delta = 0.23;
-		    var alpha = 7.5;
-		    var h = Math.pow(voltage, 2) * (1 - (delta * voltage));
-		    var diffVoltage = (-voltage + (gamma - Math.pow((vgate / vstar), xm)) * h);
-		    voltage += 5 * timestep * diffVoltage / alpha; // don't know why this works
-
-		    var diffVGate = eps * (previousHeaviside - vgate);
-		    vgate += timestep * diffVGate;
-
-		    debug.push({ "time":x, "Vm":voltage, "V":vgate});
-		    
-		    return { "voltage": voltage, "vgate": vgate };
-		}
-
-		/**
-		 * graph the VGate value from the calculateKarma function
-		 * @param  {[int]} x [the current x value of the function]
-		 * @return {[int]}   [the y value generated based on the x value]
-		 */
-		function calculateVGate(x) {
-			
-		    var vgate = calculateKarma(x)["vgate"];
-		    app.ctx.strokeStyle = "#00FF00";
-		    return vgate;
-		}
-
-		/**
-		 * graph the Voltage value from the calculateKarma function
-		 * @param  {[int]} x [the current x value of the function]
-		 * @return {[int]}   [the y value generated based on the x value]
-		 */
-		function calculateVoltage(x) {
-			var voltage = calculateKarma(x)["voltage"];
-			app.ctx.strokeStyle = "#FF0000";
-			return voltage;
-		}
-
-
-		/**
-		 * The heaviside function. Return 0 if the expression is negative
-		 * and 1 otherwise
-		 * @param  {int} expression The expression to evaluate
-		 * @return {int} 0 if the expression evaluates to a negative number, 1 otherwise
-		 */
-		function heaviside(expression) {
-			if (expression < 0) {
-				return 0;
-			} else {
-				return 1;
-			}
-		}
-
 		function numericValue(value) {
 			if (!isNaN(Number(value))) {
 				return Number(value);
@@ -363,14 +315,13 @@
 
 
 	</script>
-	<link href="../plotter.css" type="text/css" rel="stylesheet" />
 	</style>
 </head>
 <body>
 	<div id="app">
 		<canvas id="plot">hello</canvas>
 	</div>
-	<div id="controls" class="plotter_form">
+	<form id="controls" class="plotter_form">
 
 		<!-- Formulas -->
 <!-- 		<fieldset>
@@ -394,38 +345,38 @@
 		<fieldset>
 			<div class="plotter_inputgroup">
 				<label for="vstar">VStar</label>
-				<input type="text" name="vstar" value="0.64" />
+				<input type="text" name="vstar" />
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="xm">xm</label>
-				<input type="text" name="xm" value="10.0" />
+				<input type="text" name="xm"/>
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="ueps">1/eps</label>
-				<input type="text" name="ueps" value="250" />
+				<input type="text" name="ueps"/>
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="s1">S1</label>
-				<input type="text" name="s1" value="0.0"/>
+				<input type="text" name="s1"/>
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="s2">S2</label>
-				<input type="text" name="s2" value="300.0" />
+				<input type="text" name="s2"/>
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="time">time</label>
-				<input type="text" name="time" value="500.0" />
+				<input type="text" name="time"/>
 			</div>
 		</fieldset>
 
 		<!-- Buttons -->
 		<fieldset>
 			<div class="plotter_inputgroup">
-				<button type="submit" id="reset">Reset</button>
+				<button type="submit" id="update">Update Graph</button>
 				<button id="default">Defaults</button>
-				<button id="getData">Print Data</button>
+				<button id="export">Print Data</button>
 			</div>
 		</fieldset>
-	</div>
+	</form>
 </body>
 </html>
