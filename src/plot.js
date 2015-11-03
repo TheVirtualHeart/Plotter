@@ -182,9 +182,7 @@ function Plot()
 
 
 		/**
-		 * [reCalculateLabels description]
-		 * @param  {[type]} ) {            calculateLabelSize(); calculateLabelBleed( [description]
-		 * @return {[type]}   [description]
+		 * Recalculate the size of the labels and the label bleed.
 		 */
 		reCalculateLabels: function() { 
 			calculateLabelSize(); 
