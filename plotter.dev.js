@@ -173,7 +173,7 @@ function Plot()
 		 * coordinates where the mouse was last down.
 		 *
 		 * @property {Point} mouse.move - The point in the plot's local
-		 * coordinates where the mouse was last down.		 
+		 * coordinates where the mouse has moved to	 
 		 * 
 		 * @property {Point} mouse.up - The point in the plot's local
 		 * coordinates where the mouse was last down.
@@ -195,9 +195,7 @@ function Plot()
 
 
 		/**
-		 * [reCalculateLabels description]
-		 * @param  {[type]} ) {            calculateLabelSize(); calculateLabelBleed( [description]
-		 * @return {[type]}   [description]
+		 * Recalculate the size of the labels and the label bleed.
 		 */
 		reCalculateLabels: function() { 
 			calculateLabelSize(); 
@@ -750,7 +748,7 @@ function createPlotter()
 			
 			p1 = this.plotToCanvas(p1);
 			p2 = this.plotToCanvas(p2);
-			app.ctx.lineCap = "round";
+			ctx.lineCap = "round";
 			ctx.beginPath();
 			ctx.moveTo(p1.x, p1.y);
 			ctx.lineTo(p2.x, p2.y);
@@ -804,7 +802,7 @@ function createPlotter()
 			if (typeof points == "undefined")
 				return;
 			
-			app.ctx.lineCap = "round";
+			ctx.lineCap = "round";
 			ctx.beginPath();
 				for (var i = 0; i < length - 1; i++)
 				{
