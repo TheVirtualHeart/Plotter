@@ -542,33 +542,55 @@ function createPlotter()
 		 */
 		plotFunction: function(func, xFunc, step, start, end)
 		{
-			if (currentPlot == undefined)
+			if (currentPlot == undefined) {
 				return;
-			
+			}
+
 			xFunc = typeof xFunc !== "undefined" ? xFunc : true;
 			step = typeof step !== "undefined" ? step : 1;
 			start = typeof start !== "undefined" ? start : (xFunc ? currentPlot.settings.domain.x : currentPlot.settings.range.x);
 			end = typeof end !== "undefined" ? end : (xFunc ? currentPlot.settings.domain.y : currentPlot.settings.range.y);
-			
+
 			var i = start, funcValue;
 			var points = [];
-			while (i < end)
-			{
-				funcValue = func(i);
-				if (typeof funcValue !== "undefined")
-					points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
-				else
+
+			ctx.lineCap = "round";
+			ctx.beginPath();
+
+				/*
+				 * This loops iterates, adding the amount specified by timestep
+				 * value to the count each time. At each time. If the value exists,
+				 * it draws a line to the new location. It does this until the value
+				 * of the count is greater than or equal to the end value.
+				 */
+				while (i < end)
 				{
-					this.plotPoly(points);
-					points = [];
+					funcValue = func(i);
+					if (typeof funcValue !== "undefined") {
+						var p = new Point(xFunc?i:funcValue, xFunc?funcValue:i);
+						p = this.plotToCanvas(p);		
+						if (i != start) {
+							ctx.lineTo(p.x, p.y);
+						}
+						else {
+							ctx.moveTo(p.x, p.y);
+						}
+					}
+					i+= step;
+					if (i > end) {
+						i = end;
+					}
 				}
-				i+= step;
-				if (i > end)
-					i = end;
-			}
-			if (typeof funcValue !== "undefined")
-				points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
-			this.plotPoly(points);
+
+				/*
+				 * an edge case. In the event that start is greater than or
+				 * equal to end, plot that point
+				 */
+				if (typeof funcValue !== "undefined") {
+					//points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
+				}
+
+			ctx.stroke();
 		},
 
 
@@ -586,75 +608,6 @@ function createPlotter()
 			point = typeof point !== "undefined" ? point : new Point(currentPlot.settings.domain.x + (currentPlot.settings.domain.y - currentPlot.settings.domain.x) * 0.5, currentPlot.settings.range.x + (currentPlot.settings.range.y - currentPlot.settings.range.x) * 0.5);
 			point = this.plotToCanvas(point);
 			ctx.fillText(text, point.x, point.y);
-		},
-
-
-		/**
-		 * Take a PointObject and draw it on the graph. It will plot the 
-		 * variable specified with its associated "x" value. The user can also
-		 * specify specific styles for the value.
-		 * 
-		 * @param {PointObject} pointObject - the object that we will plot.
-		 * @param {string} plotVar - the variable from the point object that
-		 * will act as the "y" value on the graph.
-		 * @param {Object} style - An object that contains various style
-		 * style properties for the plot. The properties it accepts are:
-		 * 		connected {boolean} - if true connects points sequentially with
-		 * 		a line
-		 * 		radius {number} - the radius of a circle around a point. Can be
-		 * 		zero
-		 * 		strokeStyle {string} - the hex value of the color of a stroke
-		 * 		fillStyle {string} - the hex value of the color of the fill
-		 * 		normalize {Point} - a Point that defines a range. The "y" value
-		 * 		will be normalized within this range.
-		 * 		
-		 */
-		plot: function(pointObject, plotVar, style) {
-
-			var connected = style.connected ? style.connected : false;
-			var radius = style.radius ? style.radius : 0;
-			var strokeStyle = style.strokeStyle ? style.strokeStyle: "#000000";
-			var fillStyle = style.fillStyle ? style.fillStyle: null;
-
-			var normalize = style.normalize ? style.normalize: null;
-			var normalizeMax = (style.hasOwnProperty("normalizeMax")) ? style.normalizeMax: null;
-			var normalizeMin = (style.hasOwnProperty("normalizeMin")) ? style.normalizeMin: null;
-
-			ctx.strokeStyle = strokeStyle;
-			ctx.fillStyle = fillStyle;
-
-			var points = pointObject.getPoints();
-
-			ctx.beginPath();
-			for (var i = 0; i < points.length; i++) {
-				var pointVars = points[i];
-
-				var x = pointVars["x"];
-				var y = pointVars[plotVar];
-
-				// if (normalizeMax !== null && normalizeMin !== null) {
-				// 	y = (y - normalizeMin)/(normalizeMax - normalizeMin);
-				// }
-				
-				if (normalize) {
-					y = (y - normalize.x)/(normalize.y - normalize.x);
-				}
-
-				var point = new Point(x, y);
-
-				var p = this.plotToCanvas(point);
-				ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
-				if (connected && i > 0) {
-					ctx.lineTo(p.x, p.y);
-				} else {
-					ctx.moveTo(p.x, p.y);
-					ctx.stroke();
-				}
-			}
-
-			//ctx.fill();
-			//if (strokeWeight !== 0) {
-			//}
 		},
 
 

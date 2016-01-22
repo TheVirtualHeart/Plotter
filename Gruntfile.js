@@ -57,6 +57,7 @@ module.exports = function(grunt) {
 		}
 	});
 
+	grunt.registerTask('merge', ['concat']);
 	grunt.registerTask('build', ['concat', 'uglify']);
 	grunt.registerTask('default', ['watch']);
 }

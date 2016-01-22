@@ -847,33 +847,109 @@ function createPlotter()
 		 */
 		plotFunction: function(func, xFunc, step, start, end)
 		{
-			if (currentPlot == undefined)
-				return;
+			// if (currentPlot == undefined)
+			// 	return;
 			
+			// xFunc = typeof xFunc !== "undefined" ? xFunc : true;
+			// step = typeof step !== "undefined" ? step : 1;
+			// start = typeof start !== "undefined" ? start : (xFunc ? currentPlot.settings.domain.x : currentPlot.settings.range.x);
+			// end = typeof end !== "undefined" ? end : (xFunc ? currentPlot.settings.domain.y : currentPlot.settings.range.y);
+			
+			// var i = start, funcValue;
+			// var points = [];
+			// while (i < end)
+			// {
+			// 	funcValue = func(i);
+			// 	if (typeof funcValue !== "undefined")
+			// 		points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
+			// 	else
+			// 	{
+			// 		this.plotPoly(points);
+			// 		points = [];
+			// 	}
+			// 	i+= step;
+			// 	if (i > end)
+			// 		i = end;
+			// }
+			// if (typeof funcValue !== "undefined")
+			// 	points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
+			// this.plotPoly(points);
+
+
+			// var length = Object.keys(points).length;
+			// if (currentPlot == undefined || length < 2)
+			// 	return;
+			
+			// closed = typeof closed !== "undefined" ? closed : false;
+			
+			// if (typeof points == "undefined")
+			// 	return;
+			
+			// ctx.lineCap = "round";
+			// ctx.beginPath();
+			// 	for (var i = 0; i < length - 1; i++)
+			// 	{
+			// 		var p = this.plotToCanvas(points[i]);
+					
+			// 		if (i != 0)
+			// 			ctx.lineTo(p.x, p.y);
+			// 		else
+			// 			ctx.moveTo(p.x, p.y);
+			// 	}
+			// 	if (closed)
+			// 	{
+			// 		var p = this.plotToCanvas(points[0]);
+			// 		ctx.lineTo(p.x, p.y);
+			// 	}
+			// ctx.stroke();
+			// 
+			if (currentPlot == undefined) {
+				return;
+			}
+
 			xFunc = typeof xFunc !== "undefined" ? xFunc : true;
 			step = typeof step !== "undefined" ? step : 1;
 			start = typeof start !== "undefined" ? start : (xFunc ? currentPlot.settings.domain.x : currentPlot.settings.range.x);
 			end = typeof end !== "undefined" ? end : (xFunc ? currentPlot.settings.domain.y : currentPlot.settings.range.y);
-			
+
 			var i = start, funcValue;
 			var points = [];
-			while (i < end)
-			{
-				funcValue = func(i);
-				if (typeof funcValue !== "undefined")
-					points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
-				else
+
+			ctx.lineCap = "round";
+			ctx.beginPath();
+				/*
+				 * This loops iterates, adding the amount specified by timestep
+				 * value to the count each time. At each time. If the value exists,
+				 * it draws a line to the new location. It does this until the value
+				 * of the count is greater than or equal to the end value.
+				 */
+				while (i < end)
 				{
-					this.plotPoly(points);
-					points = [];
+					funcValue = func(i);
+					if (typeof funcValue !== "undefined") {
+						var p = new Point(xFunc?i:funcValue, xFunc?funcValue:i);
+						p = this.plotToCanvas(p);		
+						if (i != start) {
+							ctx.lineTo(p.x, p.y);
+						}
+						else {
+							ctx.moveTo(p.x, p.y);
+						}
+					}
+					i+= step;
+					if (i > end) {
+						i = end;
+					}
 				}
-				i+= step;
-				if (i > end)
-					i = end;
-			}
-			if (typeof funcValue !== "undefined")
-				points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
-			this.plotPoly(points);
+
+				/*
+				 * an edge case. In the event that start is greater than or
+				 * equal to end, plot that point
+				 */
+				if (typeof funcValue !== "undefined") {
+					//points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
+				}
+			ctx.stroke();
 		},
 
 
