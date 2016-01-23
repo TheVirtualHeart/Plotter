@@ -1,34 +1,18 @@
 module.exports = function(grunt) {
 
 	// load plugins
-	grunt.loadNpmTasks('grunt-browserify');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-jsdoc');
+  	grunt.loadNpmTasks('grunt-jsdoc-to-markdown');
 
 	grunt.initConfig({
-		// browserify: {
-		// 	plotter: {
-		// 		src: ['src/**/*.js'],
-		// 		dest: 'plotter.dev.js',
-		// 		options: {
-		// 			browserifyOptions: {
-		// 				standalone: 'src/**/*.js'
-		// 			}
-		// 		}
-		// 	}
-		// },
 		concat: {
 			plotter: {
 				options: {
 					separator: ';\n'
 				},
-				// src: [
-				// 	'src/point.js', 
-				// 	'src/line.js',
-				// 	'src/plotter.js', 
-				// 	'src/plot.js'
-				// ],
 				src: [
 					'src/**/*.js',
 					'!src/pointObject.js'
@@ -46,6 +30,12 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+		jsdoc2md: {
+      		dist: {
+        		src: 'src/*.js',
+        		dest: 'documentation/README.md'
+      		},
+  		},
 		watch: {
 			js: {
 				files: ["**/*.js"],
@@ -57,6 +47,7 @@ module.exports = function(grunt) {
 		}
 	});
 
+	grunt.registerTask('document', ['jsdoc2md']);
 	grunt.registerTask('merge', ['concat']);
 	grunt.registerTask('build', ['concat', 'uglify']);
 	grunt.registerTask('default', ['watch']);

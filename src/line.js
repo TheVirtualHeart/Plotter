@@ -1,5 +1,6 @@
 /**
  * A generic object for holding a line.
+ * @module  Line
  * @param {Point} pa - the first point on the line (used for calculating a line based on two points)
  * @param {Point} pb - the second point on the line (used for calculating a line based on two points)
  * @param {number} s - the slope of the line (used for calculating a line based on point-slope)

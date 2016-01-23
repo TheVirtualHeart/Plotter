@@ -2,15 +2,13 @@
  * Creates a Plotter object. Given a HTML Canvas Element, this function creates
  * a series of functions for interacting with it. It also attaches some of
  * these functions to event listeners for mouse and touch events.
+ * @module Plotter
  *
  * @param {HTMLCanvasElement} canvas - The Canvas element that plots will be
  * drawn on.
  *
  * @param {Point} padding - a Point that describs how much padding
  * to apply to the canvas element before rendering elements.
- * 
- * @return {Plotter} - An object that collects properties and methods for 
- * interacting with the canvas element passed to the function.
  */
 function createPlotter()
 {
@@ -262,6 +260,12 @@ function createPlotter()
 		ctx.translate(-s.offset.x, -s.offset.y);
 	}
 	
+	/**
+	 * An object that contains several functions for interacting with the
+	 * Plotter. These include functions for interacting with the plots, as well
+	 * as functions for drawing shapes and objects.
+	 * @exports Object
+	 */
 	return {
 		set drawBorders(value) { debugBorders = value; },
 		get drawBorders() { return debugBorders; },
@@ -482,7 +486,7 @@ function createPlotter()
 		 * vertices of the polygon. They will be plotted in the order they are
 		 * listed in the array.
 		 * 
-		 * @param  {[boolean]} closed - a boolean value that specifies whether 
+		 * @param  {boolean} closed - a boolean value that specifies whether 
 		 * the vertices should be connected when the plot is rendered. By
 		 * default, the vertices will not be rendered.
 		 */
@@ -525,18 +529,18 @@ function createPlotter()
 		 * @param  {Function} func - the function we want to plot on the graph.
 		 * It takes a numeric value as a parameter and returns a numeric value.
 		 * 
-		 * @param  {[boolean]} xFunc - this specifies whether the function is
+		 * @param  {boolean=} xFunc - this specifies whether the function is
 		 * to be graphed along the x-axis or the y-axis. It's default value is
 		 * true.
 		 * 
-		 * @param  {[number]} step - the value to increment by when calculating
+		 * @param  {number=} step - the value to increment by when calculating
 		 * function points. By default, it will increment by 1.
 		 * 
-		 * @param  {[number]} start - this is the value that the function will
+		 * @param  {number=} start - this is the value that the function will
 		 * start calculating values at. By default, it will use the start value
 		 * of the plot's domain (if an xFunc) or range (if not an xFunc)
 		 * 
-		 * @param  {[number]} end - this is the value that the function will
+		 * @param  {number=} end - this is the value that the function will
 		 * stop calculating values at. By default, it will use the end value
 		 * of the plot's domain (if an xFunc) or range (if not an xFunc)
 		 */
@@ -619,7 +623,7 @@ function createPlotter()
 		 *
 		 * @param  {PointObject} pointObject - the object from which plotter
 		 * retrieves the points.
-		 * @param  {[Array]} fields - an array of the fields to display
+		 * @param  {Array=} fields - an array of the fields to display
 		 */
 		printPlotData: function(pointObject, fields) {
 			var csv = "";
