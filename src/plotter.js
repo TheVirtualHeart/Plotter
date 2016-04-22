@@ -91,23 +91,24 @@ function createPlotter()
 		
 		for(var i = 0; i < e.changedTouches.length; i++)
 		{
-			var touchID, event;
+			// var touchID;
+			var event;
 			
 			switch(type)
 			{
 				case "start":
-					event = new MouseEvent("mousedown",
+					event = new window.MouseEvent("mousedown",
 					{screenX: e.changedTouches[i].screenX, screenY: e.changedTouches[i].screenY,
 					clientX: e.changedTouches[i].clientX, clientY: e.changedTouches[i].clientY});
 				break;
 				case "move":
-					event = new MouseEvent("mousemove",
+					event = new window.MouseEvent("mousemove",
 					{screenX: e.changedTouches[i].screenX, screenY: e.changedTouches[i].screenY,
 					clientX: e.changedTouches[i].clientX, clientY: e.changedTouches[i].clientY});
 				break;
 				case "cancel":
 				case "end":
-					event = new MouseEvent("mouseup",
+					event = new window.MouseEvent("mouseup",
 					{screenX: e.changedTouches[i].screenX, screenY: e.changedTouches[i].screenY,
 					clientX: e.changedTouches[i].clientX, clientY: e.changedTouches[i].clientY});
 				break;
@@ -156,8 +157,8 @@ function createPlotter()
 		ctx.lineWidth = 2;
 		ctx.strokeRect(0, 0, canvas.width, canvas.height);
 		
-		for (var i = 0; i < plots.length; i++)
-			drawPlot(plots[i]);
+		for (var j = 0; j < plots.length; j++)
+			drawPlot(plots[j]);
 	}
 	
 	/**
@@ -168,6 +169,7 @@ function createPlotter()
 	function drawPlot(plot)
 	{
 		var s = plot.settings;
+		var tickLabel;
 		
 		ctx.translate(s.offset.x, s.offset.y);
 		ctx.clearRect(-s.labelSize.x, s.labelBleed.y, s.plotSize.x + s.labelSize.x + s.labelBleed.x, s.plotSize.y + s.labelSize.y - s.labelBleed.y);
@@ -201,15 +203,15 @@ function createPlotter()
 				
 				if (!(i % s.labelFrequency.x) && s.labelFrequency.x > 0)
 				{
-					var tickLabel = s.domain.x + i * s.unitPerTick.x;
+					tickLabel = s.domain.x + i * s.unitPerTick.x;
 					ctx.fillText( s.labelPrecision.x == -1 ? tickLabel : tickLabel.toFixed(s.labelPrecision.x), x, s.plotSize.y + 5);
 				}
 			}
 			ctx.textAlign = "right";
 			ctx.textBaseline = "middle";
-			for( var i = 0; i <= s.plotSize.y / s.gridSize.y; i++)
+			for(var j = 0; j <= s.plotSize.y / s.gridSize.y; j++)
 			{
-				var y = i * s.gridSize.y;
+				var y = j * s.gridSize.y;
 				if (!(s.orientation=="b" || s.orientation=="c"))
 					y = s.plotSize.y - y;	
 				if (s.drawGrid)
@@ -219,7 +221,7 @@ function createPlotter()
 				}
 				if (!(i % s.labelFrequency.y) && s.labelFrequency.y > 0)
 				{
-					var tickLabel = s.range.x + i * s.unitPerTick.y;
+					tickLabel = s.range.x + j * s.unitPerTick.y;
 					ctx.fillText(s.labelPrecision.y == -1 ? tickLabel : tickLabel.toFixed(s.labelPrecision.y), -5, y);
 				}
 			}
@@ -271,7 +273,7 @@ function createPlotter()
 		get drawBorders() { return debugBorders; },
 		newPlot: function(settings, name)
 		{
-			plot = new Plot(settings, ctx);
+			var plot = new Plot(settings, ctx);
 			plots.push(plot);
 			
 			if (typeof name !== "undefined")
@@ -394,13 +396,12 @@ function createPlotter()
 		pointOnPlot: function(p, plot)
 		{
 			if (typeof plot === "number" && 
-			   (plot >= 0 && plot <= plots.length - 1)) {
+			(plot >= 0 && plot <= plots.length - 1)) {
 					plot = plots[plot];
 			}
 			else if (typeof plot === "string" || 
-					 plot instanceof String || 
-					 Object.prototype.toString.call(plot) == "[object String]") {
-
+			plot instanceof String || 
+			Object.prototype.toString.call(plot) == "[object String]") {
 				plot = plots[plotNames[plot]];
 			}
 			else if (plot.hasOwnProperty('constructor') && plot.constructor == String) {
@@ -493,6 +494,7 @@ function createPlotter()
 		plotPoly: function(points, closed)
 		{
 			var length = Object.keys(points).length;
+			var p;
 			if (currentPlot == undefined || length < 2)
 				return;
 			
@@ -505,7 +507,7 @@ function createPlotter()
 			ctx.beginPath();
 				for (var i = 0; i < length - 1; i++)
 				{
-					var p = this.plotToCanvas(points[i]);
+					p = this.plotToCanvas(points[i]);
 					
 					if (i != 0)
 						ctx.lineTo(p.x, p.y);
@@ -514,7 +516,7 @@ function createPlotter()
 				}
 				if (closed)
 				{
-					var p = this.plotToCanvas(points[0]);
+					p = this.plotToCanvas(points[0]);
 					ctx.lineTo(p.x, p.y);
 				}
 			ctx.stroke();
@@ -556,7 +558,6 @@ function createPlotter()
 			end = typeof end !== "undefined" ? end : (xFunc ? currentPlot.settings.domain.y : currentPlot.settings.range.y);
 
 			var i = start, funcValue;
-			var points = [];
 
 			ctx.lineCap = "round";
 			ctx.beginPath();
@@ -631,14 +632,14 @@ function createPlotter()
 			var header = fields ? fields : Object.keys(points[0]);
 			
 			var point = {};
-			for (var i = 0; i < points.length; i++) {
-				point = points[i];
-				if (i === 0) {	
-					for(var j = 0; j < header.length; j++) {
-						if (j > 0) {
+			for (var curPoint = 0; curPoint < points.length; curPoint++) {
+				point = points[curPoint];
+				if (curPoint === 0) {	
+					for(var curHeader = 0; curHeader < header.length; curHeader++) {
+						if (curHeader > 0) {
 							csv += ",";
 						}
-						csv += header[j];
+						csv += header[curHeader];
 					}
 					csv += "\n";
 				}
@@ -650,7 +651,7 @@ function createPlotter()
 				}
 				csv += "\n";
 			}
-			window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));;
+			window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));
 		}
 	}
 }

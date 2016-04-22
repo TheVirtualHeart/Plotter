@@ -4,6 +4,7 @@
   "description": "a library for plotting functions on the HTML5 Canvas",
   "main": "dist/plotter.min.js",
   "scripts": {
+    "pretest": "eslint ./src/**/*",
     "test": "echo \"Error: no test specified\" && exit 1",
     "bundle": "webpack src/entry.js dist/plotter.min.js"
   },
