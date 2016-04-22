@@ -11,3 +11,5 @@ function Line(pa, pb, s, p) {
 	this.point = p; 
 	this.slope = s;
 } 
+
+module.exports = Line;

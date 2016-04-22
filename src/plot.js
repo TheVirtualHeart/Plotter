@@ -1,3 +1,5 @@
+var Point = require('./point');
+
 /**
  * Plots are what Points (and objects that consist of Points) are rendered on.
  * Plots describe the context in which Points are drawn, holding information

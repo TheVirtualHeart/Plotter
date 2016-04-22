@@ -1,3 +1,7 @@
+var Point = require('./point');
+var Plot = require('./plot');
+var Line = require('./line');
+
 /**
  * Creates a Plotter object. Given a HTML Canvas Element, this function creates
  * a series of functions for interacting with it. It also attaches some of
@@ -651,6 +655,7 @@ function createPlotter()
 	}
 }
 
+module.exports = createPlotter;
 // function createPlotter() {
 // 	return Plotter.apply(this, arguments;
 // }

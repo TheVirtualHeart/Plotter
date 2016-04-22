@@ -7,3 +7,5 @@ function Point(px, py) {
 	this.x = px; 
 	this.y = py;
 }
+
+module.exports = Point;
