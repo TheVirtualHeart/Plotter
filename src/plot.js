@@ -292,3 +292,5 @@ function Plot()
 	
 	return self;
 }
+
+module.exports = Plot;
