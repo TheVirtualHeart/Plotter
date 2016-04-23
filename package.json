@@ -6,7 +6,8 @@
   "scripts": {
     "pretest": "eslint ./src/**/*",
     "test": "mocha tests --recursive",
-    "bundle": "webpack src/entry.js dist/plotter.min.js"
+    "bundle": "webpack src/entry.js dist/plotter.min.js",
+    "coverage": "istanbul cover _mocha -- tests --recursive -R spec"
   },
   "repository": {
     "type": "git",

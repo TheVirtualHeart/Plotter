@@ -16,3 +16,7 @@ sftp-config.json
 
 # ignore node modules. They can be added via npm install
 node_modules
+npm-debug.log
+
+# ignore the generated coverage report
+coverage
