@@ -14,8 +14,11 @@
 # sftp configuration file
 sftp-config.json
 
+# ignore generated binary .DS_STORE
+.DS_STORE
+
 # ignore node modules. They can be added via npm install
 node_modules
 
 # ignore the generated coverage information
-coverage/
+coverage
