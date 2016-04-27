@@ -345,8 +345,9 @@ function createPlotter()
 		},
 		selectPlot: function(plot, clear, clip)
 		{
-			if (typeof plot === "number" && (plot < 0 || plot > plots.length - 1))
-				return;
+			if (typeof plot === "number" && (plot < 0 || plot > plots.length - 1)) {
+				throw new Error("Plot ID does not exist");
+			}
 			
 			clear = typeof clear !== "undefined" ? clear : true;
 			clip = typeof clip !== "undefined" ? clip : true;
