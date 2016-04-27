@@ -436,13 +436,13 @@ function createPlotter()
 			 * from list.
 			 */
 			plot = (typeof plot === "number" ?
-				plots[plot] : 
+				plots[plot] :
 				((typeof plot === "string" ||
-						 plot instanceof String || 
-						 plot.constructor == String || 
-						 Object.prototype.toString.call(plot) == "[object String]") ?
-						 		plots[plotNames[plot]] :
-						 		plot));
+					plot instanceof String ||
+					plot.constructor == String ||
+					Object.prototype.toString.call(plot) == "[object String]") ?
+					plots[plotNames[plot]] :
+					plot));
 			
 			redrawCanvas = typeof redrawCanvas !== "undefined" ? redrawCanvas : false;
 			reCalcLabels = typeof reCalcLabels !== "undefined" ? reCalcLabels : false;
@@ -512,14 +512,14 @@ function createPlotter()
 			 * given is an id or a string and then selects the appropriate plot
 			 * from list.
 			 */
-			plot = (typeof plot === "number" ? 
-				plots[plot] : 
-				((typeof plot === "string" || 
-					     plot instanceof String || 
-					     plot.constructor == String || 
-					     Object.prototype.toString.call(plot) == "[object String]") ?
-					     		plots[plotNames[plot]] :
-					            plot));
+			plot = (typeof plot === "number" ?
+				plots[plot] :
+				((typeof plot === "string" ||
+					plot instanceof String ||
+					plot.constructor == String ||
+					Object.prototype.toString.call(plot) == "[object String]") ?
+					plots[plotNames[plot]] :
+					plot));
 			
 			if (plot == undefined) {
 				return;
