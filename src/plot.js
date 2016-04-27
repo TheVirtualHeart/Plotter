@@ -5,6 +5,7 @@ var Point = require('./point');
  * Plots describe the context in which Points are drawn, holding information
  * such as labels and a local coordinate system. Plotter uses this information
  * when plotting points and other objects.
+ * @module Plot
  */
 function Plot()
 {
@@ -24,73 +25,77 @@ function Plot()
 	
 
 	/**
-	 * Plot is a module. All variables enclosed are inaccesible from the 
-	 * outside. self is returned to expose some of these variables
-	 * @type {Object}
+	 * @returns {Object} -The Plot module has a has some functionality that is
+	 * exposed to the end user. The exposed functionality include the settings,
+	 * a mouse object, and a function to recalculates the appearance of the
+	 * labels.
 	 */
 	var self = {	
 
 
 		/**
-		 * @property {object} settings - a collection of settings that affect
-		 * how the plot is rendered
+		 * A collection of settings that are used to affect the appearance of
+		 * the plot.
+		 * @type {Object}
+		 * @alias module:Plot.settings
 		 * 
-		 * @property {Point} settings.offset - by default, a graph is rendered 
-		 * in the upper left corner of the canvas. This allows you to 
-		 * reposition the plot relative to this point.
-		 *
+		 * @property {Point} settings.offset - by default, a graph is rendered
+		 * in the upper left corner of the canvas. This allows you to reposition
+		 * the plot relative to this point.
+		 * 
 		 * @property {Point} settings.domain - the points along the x-axis that
 		 * the plot will display
-		 *
-		 * @property {Point} settings.range - the points along the y-axis that 
+		 * 
+		 * @property {Point} settings.range - the points along the y-axis that
 		 * the plot will display
-		 *
-		 * @property {Point} settins.pixelPerUnit - The number of pixels that 
+		 * 
+		 * @property {Point} settins.pixelPerUnit - The number of pixels that
 		 * each unit of the plot will take up
-		 *
-		 * @property {Point} settings.plotSize - (readonly) The size of the 
-		 * plot in pixels. This value is calculated by multiplying the pixels 
-		 * per unit by the number of units in the graph (domain end - domain 
+		 * 
+		 * @property {Point} settings.plotSize - (readonly) The size of the
+		 * plot in pixels. This value is calculated by multiplying the pixels
+		 * per unit by the number of units in the graph (domain end - domain
 		 * start and range end - range start)
-		 *
-		 * @property {Point} settings.unitPerTick - A tick is wherever a line is drawn
-		 * on the plot. This controls how many units must pass before a tick is
-		 * drawn
-		 *
-		 * @property {Point} settings.gridSize - (readonly) The size of each block of 
-		 * ticks on the plot. Calculated by multiplying the pixelPerUnit by the
-		 * unitPerTick
-		 *
-		 * @property {Point} settings.labelFrequency - This is the rate at which labels
-		 * are drawn on the ticks. It will default to a label for every tick
-		 *
-		 * @property {Point} settings.labelSize - (readonly) The size of the 
-		 * label, where x is width and y is height, as calculated by 
+		 * 
+		 * @property {Point} settings.unitPerTick - A tick is wherever a line is
+		 * drawn on the plot. This controls how many units must pass before a
+		 * tick is drawn
+		 * 
+		 * @property {Point} settings.gridSize - (readonly) The size of each
+		 * block of ticks on the plot. Calculated by multiplying the
+		 * pixelPerUnit by the unitPerTick
+		 * 
+		 * @property {Point} settings.labelFrequency - This is the rate at which
+		 * labels are drawn on the ticks. It will default to a label for every
+		 * tick
+		 * 
+		 * @property {Point} settings.labelSize - (readonly) The size of the
+		 * label, where x is width and y is height, as calculated by
 		 * calculateLabelSize()
-		 *
+		 * 
 		 * @property {Point} settings.labelBleed - (readonly)
-		 *
-		 * @property {Point} settings.labelPrecision - This is a point that 
+		 * 
+		 * @property {Point} settings.labelPrecision - This is a point that
 		 * determines how many decimals trail after the "." character. Values
 		 * less than 0 disable this feature.
-		 *
+		 * 
 		 * @property {string} settings.xAxis - the label for the x axis
-		 *
+		 * 
 		 * @property {string} settings.yAxis - the label for the y axis
 		 * 
-		 * @property {boolean} settings.zeroBoundAxis - determines whether a 
+		 * @property {boolean} settings.zeroBoundAxis - determines whether a
 		 * thick black line is drawn around the 0 axis. If false, the thick
 		 * black line will be drawn around the edges of the graph.
 		 * 
-		 * @property {boolean} settings.drawGrid - determines whether the 
-		 *
+		 * @property {boolean} settings.drawGrid - determines whether the
+		 * 
 		 * @property {boolean} settings.drawCoords - If true, the mouse
 		 * coordinates will be rendered. CURRENTLY NOT WORKING.
 		 * 
-		 * @property {string} settings.orientation - determines where the
-		 * origin of the graph is rendered. It starts at the bottom left and
-		 * goes counterclockwise. "a" is the bottom left, "b" is the top left,
-		 * "c" is the top right, "d" is the bottom right.
+		 * @property {string} settings.orientation - determines where the origin
+		 * of the graph is rendered. It starts at the bottom left and goes
+		 * counterclockwise. "a" is the bottom left, "b" is the top left, "c" is
+		 * the top right, "d" is the bottom right.
 		 */
 		settings:
 		{
@@ -155,21 +160,26 @@ function Plot()
 
 
 		/**
-		 * @property {object} mouse - a collection of settings related to the 
+		 * a collection of settings related to the mouse in relation to the
+		 * plot.
+		 * @type {Object}
+		 * @alias module:Plot.mouse
+		 * 
+		 * @property {object} mouse - a collection of settings related to the
 		 * mouse in relation to the plot.
-		 *
+		 * 
 		 * @property {Point} mouse.down - The point in the plot's local
 		 * coordinates where the mouse was last down.
-		 *
+		 * 
 		 * @property {Point} mouse.move - The point in the plot's local
-		 * coordinates where the mouse has moved to	 
+		 * coordinates where the mouse has moved to
 		 * 
 		 * @property {Point} mouse.up - The point in the plot's local
 		 * coordinates where the mouse was last down.
-		 *
+		 * 
 		 * @property {Point} mouse.isDown - The point in the plot's local
 		 * coordinates where the mouse was last down.
-		 *
+		 * 
 		 * @property {Point} mouse.isUp - The point in the plot's local
 		 * coordinates where the mouse was last down.
 		 */
@@ -185,6 +195,7 @@ function Plot()
 
 		/**
 		 * Recalculate the size of the labels and the label bleed.
+		 * @alias module:Plot.recalculateLabels
 		 */
 		reCalculateLabels: function() { 
 			calculateLabelSize(); 
@@ -258,7 +269,6 @@ function Plot()
 	 * This function calculates the "bleed" of the labels. Essentially, if a 
 	 * label value overflows, this provides a cutoff after which it will stop
 	 * rendering the text.
-	 * @return {[type]} [description]
 	 */
 	function calculateLabelBleed()
 	{

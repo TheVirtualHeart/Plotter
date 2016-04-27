@@ -1,5 +1,6 @@
 /**
  * A generic object for holding a line.
+ * @module  Line
  * @param {Point} pa - the first point on the line (used for calculating a line based on two points)
  * @param {Point} pb - the second point on the line (used for calculating a line based on two points)
  * @param {number} s - the slope of the line (used for calculating a line based on point-slope)
@@ -16,6 +17,7 @@ function Line(pa, pb, s, p) {
  * Plots describe the context in which Points are drawn, holding information
  * such as labels and a local coordinate system. Plotter uses this information
  * when plotting points and other objects.
+ * @module Plot
  */
 function Plot()
 {
@@ -35,73 +37,77 @@ function Plot()
 	
 
 	/**
-	 * Plot is a module. All variables enclosed are inaccesible from the 
-	 * outside. self is returned to expose some of these variables
-	 * @type {Object}
+	 * @returns {Object} -The Plot module has a has some functionality that is
+	 * exposed to the end user. The exposed functionality include the settings,
+	 * a mouse object, and a function to recalculates the appearance of the
+	 * labels.
 	 */
 	var self = {	
 
 
 		/**
-		 * @property {object} settings - a collection of settings that affect
-		 * how the plot is rendered
+		 * A collection of settings that are used to affect the appearance of
+		 * the plot.
+		 * @type {Object}
+		 * @alias module:Plot.settings
 		 * 
-		 * @property {Point} settings.offset - by default, a graph is rendered 
-		 * in the upper left corner of the canvas. This allows you to 
-		 * reposition the plot relative to this point.
-		 *
+		 * @property {Point} settings.offset - by default, a graph is rendered
+		 * in the upper left corner of the canvas. This allows you to reposition
+		 * the plot relative to this point.
+		 * 
 		 * @property {Point} settings.domain - the points along the x-axis that
 		 * the plot will display
-		 *
-		 * @property {Point} settings.range - the points along the y-axis that 
+		 * 
+		 * @property {Point} settings.range - the points along the y-axis that
 		 * the plot will display
-		 *
-		 * @property {Point} settins.pixelPerUnit - The number of pixels that 
+		 * 
+		 * @property {Point} settins.pixelPerUnit - The number of pixels that
 		 * each unit of the plot will take up
-		 *
-		 * @property {Point} settings.plotSize - (readonly) The size of the 
-		 * plot in pixels. This value is calculated by multiplying the pixels 
-		 * per unit by the number of units in the graph (domain end - domain 
+		 * 
+		 * @property {Point} settings.plotSize - (readonly) The size of the
+		 * plot in pixels. This value is calculated by multiplying the pixels
+		 * per unit by the number of units in the graph (domain end - domain
 		 * start and range end - range start)
-		 *
-		 * @property {Point} settings.unitPerTick - A tick is wherever a line is drawn
-		 * on the plot. This controls how many units must pass before a tick is
-		 * drawn
-		 *
-		 * @property {Point} settings.gridSize - (readonly) The size of each block of 
-		 * ticks on the plot. Calculated by multiplying the pixelPerUnit by the
-		 * unitPerTick
-		 *
-		 * @property {Point} settings.labelFrequency - This is the rate at which labels
-		 * are drawn on the ticks. It will default to a label for every tick
-		 *
-		 * @property {Point} settings.labelSize - (readonly) The size of the 
-		 * label, where x is width and y is height, as calculated by 
+		 * 
+		 * @property {Point} settings.unitPerTick - A tick is wherever a line is
+		 * drawn on the plot. This controls how many units must pass before a
+		 * tick is drawn
+		 * 
+		 * @property {Point} settings.gridSize - (readonly) The size of each
+		 * block of ticks on the plot. Calculated by multiplying the
+		 * pixelPerUnit by the unitPerTick
+		 * 
+		 * @property {Point} settings.labelFrequency - This is the rate at which
+		 * labels are drawn on the ticks. It will default to a label for every
+		 * tick
+		 * 
+		 * @property {Point} settings.labelSize - (readonly) The size of the
+		 * label, where x is width and y is height, as calculated by
 		 * calculateLabelSize()
-		 *
+		 * 
 		 * @property {Point} settings.labelBleed - (readonly)
-		 *
-		 * @property {Point} settings.labelPrecision - This is a point that 
+		 * 
+		 * @property {Point} settings.labelPrecision - This is a point that
 		 * determines how many decimals trail after the "." character. Values
 		 * less than 0 disable this feature.
-		 *
+		 * 
 		 * @property {string} settings.xAxis - the label for the x axis
-		 *
+		 * 
 		 * @property {string} settings.yAxis - the label for the y axis
 		 * 
-		 * @property {boolean} settings.zeroBoundAxis - determines whether a 
+		 * @property {boolean} settings.zeroBoundAxis - determines whether a
 		 * thick black line is drawn around the 0 axis. If false, the thick
 		 * black line will be drawn around the edges of the graph.
 		 * 
-		 * @property {boolean} settings.drawGrid - determines whether the 
-		 *
+		 * @property {boolean} settings.drawGrid - determines whether the
+		 * 
 		 * @property {boolean} settings.drawCoords - If true, the mouse
 		 * coordinates will be rendered. CURRENTLY NOT WORKING.
 		 * 
-		 * @property {string} settings.orientation - determines where the
-		 * origin of the graph is rendered. It starts at the bottom left and
-		 * goes counterclockwise. "a" is the bottom left, "b" is the top left,
-		 * "c" is the top right, "d" is the bottom right.
+		 * @property {string} settings.orientation - determines where the origin
+		 * of the graph is rendered. It starts at the bottom left and goes
+		 * counterclockwise. "a" is the bottom left, "b" is the top left, "c" is
+		 * the top right, "d" is the bottom right.
 		 */
 		settings:
 		{
@@ -166,21 +172,26 @@ function Plot()
 
 
 		/**
-		 * @property {object} mouse - a collection of settings related to the 
+		 * a collection of settings related to the mouse in relation to the
+		 * plot.
+		 * @type {Object}
+		 * @alias module:Plot.mouse
+		 * 
+		 * @property {object} mouse - a collection of settings related to the
 		 * mouse in relation to the plot.
-		 *
+		 * 
 		 * @property {Point} mouse.down - The point in the plot's local
 		 * coordinates where the mouse was last down.
-		 *
+		 * 
 		 * @property {Point} mouse.move - The point in the plot's local
-		 * coordinates where the mouse has moved to	 
+		 * coordinates where the mouse has moved to
 		 * 
 		 * @property {Point} mouse.up - The point in the plot's local
 		 * coordinates where the mouse was last down.
-		 *
+		 * 
 		 * @property {Point} mouse.isDown - The point in the plot's local
 		 * coordinates where the mouse was last down.
-		 *
+		 * 
 		 * @property {Point} mouse.isUp - The point in the plot's local
 		 * coordinates where the mouse was last down.
 		 */
@@ -196,6 +207,7 @@ function Plot()
 
 		/**
 		 * Recalculate the size of the labels and the label bleed.
+		 * @alias module:Plot.recalculateLabels
 		 */
 		reCalculateLabels: function() { 
 			calculateLabelSize(); 
@@ -269,7 +281,6 @@ function Plot()
 	 * This function calculates the "bleed" of the labels. Essentially, if a 
 	 * label value overflows, this provides a cutoff after which it will stop
 	 * rendering the text.
-	 * @return {[type]} [description]
 	 */
 	function calculateLabelBleed()
 	{
@@ -307,15 +318,13 @@ function Plot()
  * Creates a Plotter object. Given a HTML Canvas Element, this function creates
  * a series of functions for interacting with it. It also attaches some of
  * these functions to event listeners for mouse and touch events.
+ * @module Plotter
  *
  * @param {HTMLCanvasElement} canvas - The Canvas element that plots will be
  * drawn on.
  *
  * @param {Point} padding - a Point that describs how much padding
  * to apply to the canvas element before rendering elements.
- * 
- * @return {Plotter} - An object that collects properties and methods for 
- * interacting with the canvas element passed to the function.
  */
 function createPlotter()
 {
@@ -337,6 +346,18 @@ function createPlotter()
 	canvas.addEventListener("touchend", function(e){updateTouch(e);}, false);
 	canvas.addEventListener("touchcancel", function(e){updateTouch(e);}, false);
 	
+
+	/**
+	 * Take a point in the page coordinate system and convert it to the plot
+	 * coordinate system.
+	 * 
+	 * @param  {Point} p - the point in the page coordinate system.
+	 * 
+	 * @param  {Plot} plot - the plot object. The point will be converted to
+	 * this plot's coordinate system.
+	 * 
+	 * @return {Point} - A Point in the Plot's local coordinate system.
+	 */
 	function pageToPlot(p, plot)
 	{
 		var s = plot.settings;
@@ -353,24 +374,37 @@ function createPlotter()
 	
 	function findPlotUnderPoint(p)
 	{
-		for (var i = 0; i < plots.length; i++)
-			if (pointInBounds(pageToPlot(p, plots[i]), plots[i]))
+		for (var i = 0; i < plots.length; i++) {
+			if (pointInBounds(pageToPlot(p, plots[i]), plots[i])) {
 				return i;
+			}
+		}
 		return -1;
 	}
 	
+
+	/**
+	 * Listens for a mouse event on the canvas. It tries to find the plot on
+	 * which the event occurred and records the location where the event
+	 * occurred in the plot's local coordinate system. Afterwards, it updates
+	 * the state of the plot's mouse event.
+	 * 
+	 * @param  {Event} e - the MouseEvent that occurred
+	 */
 	function updateMouse(e)
 	{
 		var plot = findPlotUnderPoint(new Point(e.pageX, e.pageY));
-		if (plot == -1)
+		if (plot == -1) {
 			return;
+		}
+
 		plot = plots[plot];
-		
 		var p = pageToPlot(new Point(e.pageX, e.pageY), plot);
 		var type = e.type.replace("mouse", '');
 		
-		if ((type == "down" || type == "move") && (!(e.buttons & 1) && e.button != 0))
+		if ((type == "down" || type == "move") && (!(e.buttons & 1) && e.button != 0)) {
 			return;
+		}
 		
 		plot.mouse[type].x = p.x;
 		plot.mouse[type].y = p.y;
@@ -386,14 +420,22 @@ function createPlotter()
 		}
 	}
 	
+
+	/**
+	 * Listens for a touch event on the canvas and converts it to an equivalent
+	 * mouse event.
+	 * @fires MouseEvent.
+	 * @alias module: Plotter~updateTouch
+	 * 
+	 * @param  {Event} e - an event list that contains all of the touch events
+	 * that occurred.
+	 */
 	function updateTouch(e)
 	{	
 		var type = e.type.replace("touch",'');
-		
 		for(var i = 0; i < e.changedTouches.length; i++)
 		{
 			var touchID, event;
-			
 			switch(type)
 			{
 				case "start":
@@ -428,14 +470,23 @@ function createPlotter()
 			}
 		}
 		
-		if (e.touches.length == 1 && type == "move")
+		if (e.touches.length == 1 && type == "move") {
 			e.preventDefault();
+		}
 	}
 	
+
+	/**
+	 * Resizes the canvas element to fit the contents of the plots. It cycles
+	 * through all of the plots and records the highest x value and the highest
+	 * y value. It then resizes the canvas and redraws the plots.
+	 * @alias module: Plotter~refitCanvas
+	 */
 	function refitCanvas()
 	{
-		if (plots.length == 0)
+		if (plots.length == 0) {
 			return;
+		}
 		
 		if (clipped)
 		{
@@ -457,13 +508,17 @@ function createPlotter()
 		ctx.lineWidth = 2;
 		ctx.strokeRect(0, 0, canvas.width, canvas.height);
 		
-		for (var i = 0; i < plots.length; i++)
+		for (var i = 0; i < plots.length; i++) {
 			drawPlot(plots[i]);
+		}
 	}
 	
+
 	/**
 	 * Renders the specified plot on the canvas. This function takes a Plot
 	 * object and then uses its settings to draw it on the canvas.
+	 * @alias module: Plotter~drawPlot
+	 * 
 	 * @param  {Plot} plot - the Plot object we want to render on the canvas
 	 */
 	function drawPlot(plot)
@@ -567,6 +622,12 @@ function createPlotter()
 		ctx.translate(-s.offset.x, -s.offset.y);
 	}
 	
+	/**
+	 * An object that contains several functions for interacting with the
+	 * Plotter. These include functions for interacting with the plots, as well
+	 * as functions for drawing shapes and objects.
+	 * @exports Object
+	 */
 	return {
 		set drawBorders(value) { debugBorders = value; },
 		get drawBorders() { return debugBorders; },
@@ -602,21 +663,60 @@ function createPlotter()
 				ctx.clip();
 			}
 		},
+
+
+		/**
+		 * Edit the settings of the plot, changing the way it is displayed. The
+		 * function goes through several steps: 
+		 * 		1. Selects the appropriate plot from the plots array. 
+		 * 		2. If specified, redraw the canvas 
+		 * 		3. updates the plot with new settings 
+		 * 		4. if specified, recalculate the labels of the plot 
+		 * 		5. draw the plot with these settings 
+		 * 		6. If clipped, specify the new clipping region.
+		 * 		
+		 * @param  {number|string} plot - the name or id of the plot to edit.
+		 * 
+		 * @param  {object} settings - an object that contains the settings of
+		 * the plot that we want to change. These values will overwrite the
+		 * plot's current settings values. @see {@link Plot.settings}
+		 * 
+		 * @param  {boolean} [reCalcLabels=false] - if true, the plot will
+		 * recalculate the location and size of it's labels.
+		 * 
+		 * @param  {boolean} [redrawCanvas=false] - if true, the plot will
+		 * redraw the entire canvas before redrawing the plot.
+		 */
 		editPlot: function(plot, settings, reCalcLabels, redrawCanvas)
 		{
-			if (typeof plot === "number" && (plot < 0 || plot > plots.length - 1))
+			if (typeof plot === "number" && (plot < 0 || plot > plots.length - 1)) {
 				return;
+			}
 			
-			plot = (typeof plot === "number" ? plots[plot] : ((typeof plot === "string" || plot instanceof String || plot.constructor == String || Object.prototype.toString.call(plot) == "[object String]") ? plots[plotNames[plot]] : plot));
+			/*
+			 * This block of code determines whether or not the current plot
+			 * given is an id or a string and then selects the appropriate plot
+			 * from list.
+			 */
+			plot = (typeof plot === "number" ?
+				plots[plot] : 
+				((typeof plot === "string" ||
+						 plot instanceof String || 
+						 plot.constructor == String || 
+						 Object.prototype.toString.call(plot) == "[object String]") ?
+						 		plots[plotNames[plot]] :
+						 		plot));
 			
 			redrawCanvas = typeof redrawCanvas !== "undefined" ? redrawCanvas : false;
 			reCalcLabels = typeof reCalcLabels !== "undefined" ? reCalcLabels : false;
 			
-			if (plot == undefined)
+			if (plot == undefined) {
 				return;
+			}
 			
-			if (clipped)
+			if (clipped) {
 				ctx.restore();
+			}
 			
 			if (redrawCanvas)
 			{
@@ -626,12 +726,15 @@ function createPlotter()
 				ctx.strokeRect(0, 0, canvas.width, canvas.height);
 			}
 			
-			for (var key in settings)
-				if (plot.settings.hasOwnProperty(key))
+			for (var key in settings) {
+				if (plot.settings.hasOwnProperty(key)) {
 					plot.settings[key] = settings[key];
+				}
+			}
 			
-			if (reCalcLabels)
+			if (reCalcLabels) {
 				plot.reCalculateLabels();
+			}
 			
 			drawPlot(plot);
 			
@@ -642,23 +745,55 @@ function createPlotter()
 				ctx.clip();
 			}
 		},
+
+
+		/**
+		 * Given a plot, find it in the plots array and set it as the current
+		 * plot.
+		 * @alias module: Plotter.selectPlot
+		 * 
+		 * @param  {string|number} plot - The name or ID of the plot we want to
+		 * select
+		 * 
+		 * @param  {boolean} [clear=true] - states whether or not we want to
+		 * clear the plot after selecting it.
+		 * 
+		 * @param  {boolean} [clip=true] - states whether or not to clip the
+		 * plot. If true, all drawing will be clipped to the bounds of the plot.
+		 */
 		selectPlot: function(plot, clear, clip)
 		{
-			if (typeof plot === "number" && (plot < 0 || plot > plots.length - 1))
+			if (typeof plot === "number" && (plot < 0 || plot > plots.length - 1)) {
 				return;
+			}
 			
 			clear = typeof clear !== "undefined" ? clear : true;
 			clip = typeof clip !== "undefined" ? clip : true;
-			plot = (typeof plot === "number" ? plots[plot] : ((typeof plot === "string" || plot instanceof String || plot.constructor == String || Object.prototype.toString.call(plot) == "[object String]") ? plots[plotNames[plot]] : plot));
+
+			/*
+			 * This block of code determines whether or not the current plot
+			 * given is an id or a string and then selects the appropriate plot
+			 * from list.
+			 */
+			plot = (typeof plot === "number" ? 
+				plots[plot] : 
+				((typeof plot === "string" || 
+					     plot instanceof String || 
+					     plot.constructor == String || 
+					     Object.prototype.toString.call(plot) == "[object String]") ?
+					     		plots[plotNames[plot]] :
+					            plot));
 			
-			if (plot == undefined)
+			if (plot == undefined) {
 				return;
-			
-			if (clipped)
+			}	
+			if (clipped) {
 				ctx.restore();
+			}
 			currentPlot = plot;
-			if (clear)
+			if (clear) {
 				drawPlot(currentPlot);
+			}
 			
 			if (clip)
 			{
@@ -667,15 +802,25 @@ function createPlotter()
 				ctx.clip();
 				clipped = true;
 			}
-			else if (clipped)
+			else if (clipped) {
 				clipped = false;
+			}
 		},
 
 
+		/**
+		 * @property {CanvasRenderingContext2D} ctx - (readonly) Gets the current
+		 * canvas context.
+		 */
 		get ctx() { 
-			return ctx; },
+			return ctx; 
+		},
 
 
+		/**
+		 * @property {Object} mouse - (readonly) Gets the mouse settings of the
+		 * current plot.
+		 */
 		get mouse()
 		{
 			if (currentPlot == undefined)
@@ -684,14 +829,36 @@ function createPlotter()
 		},
 
 
+		/**
+		 * @property {Object} settings - (readonly) Gets the settings of the
+		 * current plot. @see {@link #modue_plot_settings}
+		 */
 		get settings()
 		{
-			if (currentPlot == undefined)
+			if (currentPlot == undefined) {
 				return;
+			}
 			return currentPlot.settings;
 		},
 
 
+		/** 
+		 * Checks to see if a given point is on the plot. If a specific plot is
+		 * specified, it will check that one. Otherwise, it will use the current
+		 * plot.
+		 * @alias module: Plotter.pointOnPlot
+		 * @instance
+		 * 
+		 * @param  {Point} p - A point object. The function checks to see
+		 * if this point is in the bounds of the plot.
+		 * 
+		 * @param  {number=|string=} plot - the plot that the point will be
+		 * checked against. If one isn't specified, the current plot will be
+		 * checked.
+		 * 
+		 * @return {boolean} - true if the point is within the bounds of the
+		 * plot. False otherwise.
+		 */
 		pointOnPlot: function(p, plot)
 		{
 			if (typeof plot === "number" && 
@@ -701,19 +868,30 @@ function createPlotter()
 			else if (typeof plot === "string" || 
 					 plot instanceof String || 
 					 Object.prototype.toString.call(plot) == "[object String]") {
-
 				plot = plots[plotNames[plot]];
 			}
 			else if (plot.hasOwnProperty('constructor') && plot.constructor == String) {
 				plot = plots[plotNames[plot]];
 			}
-			else
+			else {
 				plot = currentPlot;
+			}
 			
 			return pointInBounds(p, plot);
 		},
 
 
+		/**
+		 * Given a single point, translate its coordinates from the local
+		 * coordinates of the plot to the actual coordinates of the canvas.
+		 * @alias module: Plotter.plotToCanvas
+		 * @instance
+		 * 
+		 * @param  {Point} p 	- The point in the local coordinates of the plot.
+		 * 
+		 * @return {Point}   	- The point translated to the coordinates of the
+		 * graph.
+		 */
 		plotToCanvas: function(p)
 		{
 			var s = currentPlot.settings;
@@ -723,58 +901,109 @@ function createPlotter()
 		},
 
 
+		/**
+		 * Draw a point on the chart. The point is first translated from the
+		 * local coordinate point system to the actual canvas coordinates. After
+		 * this, it draws a circle to the size specified in radius. If the fill
+		 * parameter is specified, it will be filled by the current context
+		 * color. Otherwise, it strokes an outline.
+		 * @alias module:Plotter.plotPoint
+		 * @instance
+		 * 
+		 * @param  {Point}  		- the point that will be drawn on the plot
+		 * 
+		 * @param  {number} r    	- the radius of the circle that will be drawn
+		 * 
+		 * @param  {boolean=} fill 	- says whether or not to fill the circle. If
+		 * true, the cirlce will be filled. Otherwise, an outline will be drawn.
+		 */
 		plotPoint: function(p, r, fill)
 		{
-			if (currentPlot == undefined)
+			if (currentPlot == undefined) {
 				return;
+			}
 			
 			r = typeof r !== "undefined" ? r : 2;
 			fill = typeof fill !== "undefined" ? fill : true;
 			
 			p = this.plotToCanvas(p);
+
 			ctx.beginPath();
-			ctx.arc(p.x, p.y, r, 0, 2 * Math.PI);
-			if (fill)
+				ctx.arc(p.x, p.y, r, 0, 2 * Math.PI);
+			if (fill) {
 				ctx.fill();
+			}
 			else
 				ctx.stroke();
 		},
 
 
+		/**
+		 * Draw a line on the current plot. Given two points, translate their
+		 * coordinates from the plot's local coordinates to the actual canvas
+		 * coordinates and then draw a line between them.
+		 * @alias module:Plotter.plotLine
+		 * @instance
+		 * 
+		 * @param  {Point} p1 - The first point
+		 * 
+		 * @param  {Point} p2 - The second point, a line is drawn from the first
+		 * point to the second point
+		 */
 		plotLine: function(p1, p2)
 		{
-			if (currentPlot == undefined)
+			if (currentPlot == undefined) {
 				return;
+			}
 			
 			p1 = this.plotToCanvas(p1);
 			p2 = this.plotToCanvas(p2);
+
 			ctx.lineCap = "round";
 			ctx.beginPath();
-			ctx.moveTo(p1.x, p1.y);
-			ctx.lineTo(p2.x, p2.y);
+				ctx.moveTo(p1.x, p1.y);
+				ctx.lineTo(p2.x, p2.y);
 			ctx.stroke();
 		},
 
 
+		/**
+		 * This function draws a line on the current plot. Given a single point
+		 * and the slope of the line, generate the line and draw it on the
+		 * graph.
+		 * @alias module:Plotter.plotSlope
+		 * @instance
+		 * 
+		 * @param  {Point}	p     	- a single point on the line.
+		 * 
+		 * @param  {number}	slope 	- the slope of the line
+		 * 
+		 * @return {Line} - A Line object based on the calculations that were
+		 * made
+		 */
 		plotSlope: function(p, slope)
 		{
 			if (currentPlot == undefined)
 				return;
 			
+			// follow the slope of the line to the leftmost edge of the plot
 			var p1 = new Point(currentPlot.settings.domain.x, p.y - slope * (p.x - currentPlot.settings.domain.x));
 			if (!pointInBounds(p1, currentPlot))
 			{
 				p1.y = p1.y < currentPlot.settings.range.x ? currentPlot.settings.range.x : currentPlot.settings.range.y;
 				p1.x = p.x - (p.y - p1.y)/slope;
 			}
+
+			// follow the slope of the line to the rightmost edge of the plot
 			var p2 = new Point(currentPlot.settings.domain.y, p.y - slope * (p.x - currentPlot.settings.domain.y));
 			if (!pointInBounds(p2, currentPlot))
 			{
 				p2.y = p2.y < currentPlot.settings.range.x ? currentPlot.settings.range.x : currentPlot.settings.range.y;
 				p2.x = p.x - (p.y - p2.y)/slope;
 			}
+
+			// plot the line and return it
 			this.plotLine(p1, p2);
-			
 			return new Line(p1, p2, slope, new Point(p.x, p.y));
 		},
 
@@ -782,32 +1011,35 @@ function createPlotter()
 		/**
 		 * Take an array of vertices and add them to the plot sequentially.
 		 * When all of them have been added, draw them on the canvas.
+		 * @alias module:Plotter.plotPoly
+		 * @instance
 		 * 
 		 * @param  {Array.<Point>} points - an array that contains all of the 
 		 * vertices of the polygon. They will be plotted in the order they are
 		 * listed in the array.
 		 * 
-		 * @param  {[boolean]} closed - a boolean value that specifies whether 
+		 * @param  {boolean} closed - a boolean value that specifies whether 
 		 * the vertices should be connected when the plot is rendered. By
 		 * default, the vertices will not be rendered.
 		 */
 		plotPoly: function(points, closed)
 		{
 			var length = Object.keys(points).length;
-			if (currentPlot == undefined || length < 2)
+			if (currentPlot == undefined || length < 2) {
 				return;
+			}
 			
 			closed = typeof closed !== "undefined" ? closed : false;
 			
-			if (typeof points == "undefined")
+			if (typeof points == "undefined") {
 				return;
+			}
 			
 			ctx.lineCap = "round";
 			ctx.beginPath();
 				for (var i = 0; i < length - 1; i++)
 				{
 					var p = this.plotToCanvas(points[i]);
-					
 					if (i != 0)
 						ctx.lineTo(p.x, p.y);
 					else
@@ -823,86 +1055,36 @@ function createPlotter()
 
 
 		/**
-		 * Given a mathematical function, render it on a plot. This function
-		 * iterates from the start value to the end value. At each point, it
-		 * calculates the point at that value using the given function.
+		 * Given a mathematical callback function, render it on a plot. This
+		 * function iterates from the start value to the end value. At each
+		 * point, it calls the callback function, passing the current value
+		 * iteration as a parameter. It records the output and uses that to
+		 * generate a Point object. The Point is then added to the canvas
+		 * context's path. When it has reached the end, it calls the canvas
+		 * context's stroke method to draw it.
+		 * @alias module:Plotter.plotFunction
+		 * @instance
 		 * 
 		 * @param  {Function} func - the function we want to plot on the graph.
 		 * It takes a numeric value as a parameter and returns a numeric value.
 		 * 
-		 * @param  {[boolean]} xFunc - this specifies whether the function is
-		 * to be graphed along the x-axis or the y-axis. It's default value is
+		 * @param  {boolean=} xFunc - this specifies whether the function is to
+		 * be graphed along the x-axis or the y-axis. It's default value is
 		 * true.
 		 * 
-		 * @param  {[number]} step - the value to increment by when calculating
+		 * @param  {number=} step - the value to increment by when calculating
 		 * function points. By default, it will increment by 1.
 		 * 
-		 * @param  {[number]} start - this is the value that the function will
+		 * @param  {number=} start - this is the value that the function will
 		 * start calculating values at. By default, it will use the start value
 		 * of the plot's domain (if an xFunc) or range (if not an xFunc)
 		 * 
-		 * @param  {[number]} end - this is the value that the function will
-		 * stop calculating values at. By default, it will use the end value
-		 * of the plot's domain (if an xFunc) or range (if not an xFunc)
+		 * @param  {number=} end - this is the value that the function will stop
+		 * calculating values at. By default, it will use the end value of the
+		 * plot's domain (if an xFunc) or range (if not an xFunc)
 		 */
 		plotFunction: function(func, xFunc, step, start, end)
 		{
-			// if (currentPlot == undefined)
-			// 	return;
-			
-			// xFunc = typeof xFunc !== "undefined" ? xFunc : true;
-			// step = typeof step !== "undefined" ? step : 1;
-			// start = typeof start !== "undefined" ? start : (xFunc ? currentPlot.settings.domain.x : currentPlot.settings.range.x);
-			// end = typeof end !== "undefined" ? end : (xFunc ? currentPlot.settings.domain.y : currentPlot.settings.range.y);
-			
-			// var i = start, funcValue;
-			// var points = [];
-			// while (i < end)
-			// {
-			// 	funcValue = func(i);
-			// 	if (typeof funcValue !== "undefined")
-			// 		points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
-			// 	else
-			// 	{
-			// 		this.plotPoly(points);
-			// 		points = [];
-			// 	}
-			// 	i+= step;
-			// 	if (i > end)
-			// 		i = end;
-			// }
-			// if (typeof funcValue !== "undefined")
-			// 	points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
-			// this.plotPoly(points);
-
-
-			// var length = Object.keys(points).length;
-			// if (currentPlot == undefined || length < 2)
-			// 	return;
-			
-			// closed = typeof closed !== "undefined" ? closed : false;
-			
-			// if (typeof points == "undefined")
-			// 	return;
-			
-			// ctx.lineCap = "round";
-			// ctx.beginPath();
-			// 	for (var i = 0; i < length - 1; i++)
-			// 	{
-			// 		var p = this.plotToCanvas(points[i]);
-					
-			// 		if (i != 0)
-			// 			ctx.lineTo(p.x, p.y);
-			// 		else
-			// 			ctx.moveTo(p.x, p.y);
-			// 	}
-			// 	if (closed)
-			// 	{
-			// 		var p = this.plotToCanvas(points[0]);
-			// 		ctx.lineTo(p.x, p.y);
-			// 	}
-			// ctx.stroke();
-			// 
 			if (currentPlot == undefined) {
 				return;
 			}
@@ -917,6 +1099,7 @@ function createPlotter()
 
 			ctx.lineCap = "round";
 			ctx.beginPath();
+
 				/*
 				 * This loops iterates, adding the amount specified by timestep
 				 * value to the count each time. At each time. If the value exists,
@@ -949,6 +1132,7 @@ function createPlotter()
 				if (typeof funcValue !== "undefined") {
 					//points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
 				}
+
 			ctx.stroke();
 		},
 
@@ -956,7 +1140,9 @@ function createPlotter()
 		/** 
 		 * If a plot is currently specified, draw the text at the specified
 		 * point on the plot.
+		 * 
 		 * @param  {string} text  - The text the user wants to write on the canvas
+		 * 
 		 * @param  {Point} point  - The point, in the plot's local coordinate
 		 * system, that the text will be rendered at.
 		 */
@@ -971,75 +1157,6 @@ function createPlotter()
 
 
 		/**
-		 * Take a PointObject and draw it on the graph. It will plot the 
-		 * variable specified with its associated "x" value. The user can also
-		 * specify specific styles for the value.
-		 * 
-		 * @param {PointObject} pointObject - the object that we will plot.
-		 * @param {string} plotVar - the variable from the point object that
-		 * will act as the "y" value on the graph.
-		 * @param {Object} style - An object that contains various style
-		 * style properties for the plot. The properties it accepts are:
-		 * 		connected {boolean} - if true connects points sequentially with
-		 * 		a line
-		 * 		radius {number} - the radius of a circle around a point. Can be
-		 * 		zero
-		 * 		strokeStyle {string} - the hex value of the color of a stroke
-		 * 		fillStyle {string} - the hex value of the color of the fill
-		 * 		normalize {Point} - a Point that defines a range. The "y" value
-		 * 		will be normalized within this range.
-		 * 		
-		 */
-		plot: function(pointObject, plotVar, style) {
-
-			var connected = style.connected ? style.connected : false;
-			var radius = style.radius ? style.radius : 0;
-			var strokeStyle = style.strokeStyle ? style.strokeStyle: "#000000";
-			var fillStyle = style.fillStyle ? style.fillStyle: null;
-
-			var normalize = style.normalize ? style.normalize: null;
-			var normalizeMax = (style.hasOwnProperty("normalizeMax")) ? style.normalizeMax: null;
-			var normalizeMin = (style.hasOwnProperty("normalizeMin")) ? style.normalizeMin: null;
-
-			ctx.strokeStyle = strokeStyle;
-			ctx.fillStyle = fillStyle;
-
-			var points = pointObject.getPoints();
-
-			ctx.beginPath();
-			for (var i = 0; i < points.length; i++) {
-				var pointVars = points[i];
-
-				var x = pointVars["x"];
-				var y = pointVars[plotVar];
-
-				// if (normalizeMax !== null && normalizeMin !== null) {
-				// 	y = (y - normalizeMin)/(normalizeMax - normalizeMin);
-				// }
-				
-				if (normalize) {
-					y = (y - normalize.x)/(normalize.y - normalize.x);
-				}
-
-				var point = new Point(x, y);
-
-				var p = this.plotToCanvas(point);
-				ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
-				if (connected && i > 0) {
-					ctx.lineTo(p.x, p.y);
-				} else {
-					ctx.moveTo(p.x, p.y);
-					ctx.stroke();
-				}
-			}
-
-			//ctx.fill();
-			//if (strokeWeight !== 0) {
-			//}
-		},
-
-
-		/**
 		 * Print the plot data of the pointObject as CSV. The function accepts
 		 * a PointObject, retrives its points and parses the specified fields
 		 * as a CSV file. If no fields are specified, the function will print
@@ -1047,7 +1164,8 @@ function createPlotter()
 		 *
 		 * @param  {PointObject} pointObject - the object from which plotter
 		 * retrieves the points.
-		 * @param  {[Array]} fields - an array of the fields to display
+		 * 
+		 * @param  {Array=} fields - an array of the fields to display
 		 */
 		printPlotData: function(pointObject, fields) {
 			var csv = "";
@@ -1084,6 +1202,7 @@ function createPlotter()
 // };
 /**
  * A generic object for holding a point
+ * @module  Point
  * @param {number} px - the x coordinate of the point
  * @param {number} py - the y coordinate of the point
  */
