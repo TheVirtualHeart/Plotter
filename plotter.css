@@ -32,6 +32,121 @@
 	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
 }
 
+.plotter_inputgroup-lightblue {
+	background-color: rgb(0, 153, 255);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-orange {
+	background-color: rgb(255, 153, 0);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-gray {
+	background-color: rgb(102, 102, 102);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-pink {
+	background-color: rgb(255, 153, 255);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-purple {
+	background-color: rgb(175, 26, 235);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-yellowGreen {
+	background-color: rgb(155, 226, 17);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-indigo {
+	background-color: rgb(47, 38, 224);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-black {
+	background-color: rgb(0, 0, 0);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-yellow {
+	background-color: rgb(254, 238, 0);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-aqua {
+	background-color: rgb(29, 239, 242);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+/* Changed by Amit 06/13/2016 : Adding more Colors: */
+.plotter_inputgroup-lightCoral{
+	background-color: #F08080;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-lightSlateGray{
+	background-color:#778899 ;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-maroon {
+	background-color: #800000;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-midnightBlue {
+	background-color:#191970 ;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-orangeRed {
+	background-color: #FF4500;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-sandyBrown {
+	background-color: #F4A460;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-teal {
+	background-color: #008080;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-violet {
+	background-color:#EE82EE ;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-springGreen {
+	background-color: #00FF7F;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-olive {
+	background-color: #808000;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+/* Changed till here. */
+
+
 .plotter_inputgroup label {
 	font-weight: bold;
 	padding-right: 4px;
@@ -41,4 +156,22 @@
 	float: right;
 }
 
+.plotter_form button {
+	color: black;
+	background-color: white;
+	text-decoration: none;
+	text-align: center;
+	padding: 4px 12px;
+	font-size: 12px;
+	font-weight: 700;
+	font-family: helvetica, arial, sans-serif;
+	border-radius: 4px;
+	border: 1px solid gray;
+}
+
+.plotter_form [type="submit"] {
+	background-color: #3B99FC;
+	color: white;
+	border: 1px solid #3B99FC;
+}
 
