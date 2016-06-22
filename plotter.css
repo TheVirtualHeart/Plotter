@@ -62,7 +62,7 @@
 	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
 }
 
-.plotter_inputgroup-yellowgreen {
+.plotter_inputgroup-yellowGreen {
 	background-color: rgb(155, 226, 17);
 	color: white;
 	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
@@ -91,6 +91,61 @@
 	color: white;
 	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
 }
+
+/* Changed by Amit 06/13/2016 : Adding more Colors: */
+.plotter_inputgroup-lightCoral{
+	background-color: #F08080;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-lightSlateGray{
+	background-color:#778899 ;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-maroon {
+	background-color: #800000;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-midnightBlue {
+	background-color:#191970 ;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-orangeRed {
+	background-color: #FF4500;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-sandyBrown {
+	background-color: #F4A460;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-teal {
+	background-color: #008080;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-violet {
+	background-color:#EE82EE ;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-springGreen {
+	background-color: #00FF7F;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-olive {
+	background-color: #808000;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+/* Changed till here. */
+
 
 .plotter_inputgroup label {
 	font-weight: bold;
