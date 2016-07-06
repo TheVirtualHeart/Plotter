@@ -147,6 +147,119 @@
 /* Changed till here. */
 
 
+/* Changed by Amit 07/01/2016 : Adding more Colors: */
+
+.plotter_inputgroup-blueViolet {
+	background-color: #8A2BE2;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-brown {
+	background-color: #A52A2A;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-burlyWood {
+	background-color: #DEB887;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-chartreuse {
+	background-color: #7FFF00;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-chocolate {
+	background-color: #D2691E;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-cornflowerBlue {
+	background-color: #6495ED;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-darkGoldenRod {
+	background-color: #B8860B;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-darkMagenta {
+	background-color: #8B008B;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-darkSlateGrey {
+	background-color: #2F4F4F;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-fireBrick {
+	background-color: #B22222;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-lime {
+	background-color: #00FF00;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-saddleBrown {
+	background-color: #8B4513;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-turquoise {
+	background-color: #40E0D0;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-cadetBlue {
+	background-color: #5F9EA0;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-darkGreen {
+	background-color: #006400;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-darkRed {
+	background-color: #8B0000;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-darkSalmon {
+	background-color: #E9967A;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-deepPink {
+	background-color: #FF1493;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+.plotter_inputgroup-dodgerBlue {
+	background-color: #1E90FF;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-forestGreen {
+	background-color: #228B22;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-gold {
+	background-color: #FFD700;
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+/* Changed till here. */
+
 .plotter_inputgroup label {
 	font-weight: bold;
 	padding-right: 4px;
