@@ -167,7 +167,8 @@ function Plot()
 			zeroBoundAxis: true,
 			drawGrid: true,
 			drawCoords: false,
-			orientation: "a"
+			orientation: "a",
+			timeUnit: 1, // Default milliseconds
 		},
 
 
@@ -245,7 +246,6 @@ function Plot()
 		
 		ctx.font = "24px Helvetica";
 		var labelPadding = ctx.measureText("M.").width;
-		
 		if (s.labelFrequency.y != 0) {
 			x += Math.max(ctx.measureText(s.range.x).width, ctx.measureText(s.range.x + Math.floor(s.plotSize.y / s.gridSize.y) * s.unitPerTick.y).width);
 		}
@@ -522,8 +522,9 @@ function createPlotter()
 	 * @param  {Plot} plot - the Plot object we want to render on the canvas
 	 */
 	function drawPlot(plot)
-	{
+	{	
 		var s = plot.settings;
+		var timeConversionFactor = s.timeUnit;
 		
 		ctx.translate(s.offset.x, s.offset.y);
 		ctx.clearRect(-s.labelSize.x, s.labelBleed.y, s.plotSize.x + s.labelSize.x + s.labelBleed.x, s.plotSize.y + s.labelSize.y - s.labelBleed.y);
@@ -554,10 +555,9 @@ function createPlotter()
 					ctx.moveTo(x, s.plotSize.y);
 					ctx.lineTo(x, 0);
 				}
-				
 				if (!(i % s.labelFrequency.x) && s.labelFrequency.x > 0)
 				{
-					var tickLabel = s.domain.x + i * s.unitPerTick.x;
+					var tickLabel = s.domain.x + i * s.unitPerTick.x * timeConversionFactor;
 					ctx.fillText( s.labelPrecision.x == -1 ? tickLabel : tickLabel.toFixed(s.labelPrecision.x), x, s.plotSize.y + 5);
 				}
 			}
@@ -574,7 +574,7 @@ function createPlotter()
 					ctx.lineTo(s.plotSize.x, y);
 				}
 				if (!(i % s.labelFrequency.y) && s.labelFrequency.y > 0)
-				{
+				{	
 					var tickLabel = s.range.x + i * s.unitPerTick.y;
 					ctx.fillText(s.labelPrecision.y == -1 ? tickLabel : tickLabel.toFixed(s.labelPrecision.y), -5, y);
 				}
@@ -620,6 +620,25 @@ function createPlotter()
 		}
 		
 		ctx.translate(-s.offset.x, -s.offset.y);
+		
+		//	This function returns the conversion factor to be multiplied to convert
+		//	any time unit to mili seconds.	
+		/*function _timeConversion(){
+			switch(s.timeUnit){
+				case "nanoseconds":
+					return 1e-6;
+				case "microseconds":
+					return 0.001;	
+				case "milliseconds":
+					return 1;
+				case "seconds":
+					return 1000;
+				case "minutes":
+					return 60000;
+				case "hours":
+					return 3.6e+6;
+			}
+		}*/
 	}
 	
 	/**
@@ -653,7 +672,7 @@ function createPlotter()
 			
 			if (clipped && unclip)
 				ctx.restore();
-			
+
 			drawPlot(currentPlot);
 			
 			if (clipped)
@@ -688,7 +707,7 @@ function createPlotter()
 		 * redraw the entire canvas before redrawing the plot.
 		 */
 		editPlot: function(plot, settings, reCalcLabels, redrawCanvas)
-		{
+		{	
 			if (typeof plot === "number" && (plot < 0 || plot > plots.length - 1)) {
 				return;
 			}
@@ -725,7 +744,6 @@ function createPlotter()
 				ctx.lineWidth = 2;
 				ctx.strokeRect(0, 0, canvas.width, canvas.height);
 			}
-			
 			for (var key in settings) {
 				if (plot.settings.hasOwnProperty(key)) {
 					plot.settings[key] = settings[key];
@@ -834,7 +852,7 @@ function createPlotter()
 		 * current plot. @see {@link #modue_plot_settings}
 		 */
 		get settings()
-		{
+		{	
 			if (currentPlot == undefined) {
 				return;
 			}
