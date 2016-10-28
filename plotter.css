@@ -281,6 +281,15 @@
 	float: right;
 }
 
+.plotter_inputgroup select {
+	background-color: #d6d6c2;
+   	padding: 2px;
+   	outline: none;
+   	margin-top: 5px; 
+   	margin-bottom: 5px;
+	margin-right: 5px;
+}
+
 .plotter_form button {
 	color: black;
 	background-color: white;
